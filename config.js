@@ -6,9 +6,9 @@
 window.MIH_CONFIG = {
   defaultProvider: 'grok',
   grok: {
-    apiKey: 'YOUR_GROK_API_KEY_HERE',
-    model: 'grok-3',
-    endpoint: 'https://api.x.ai/v1/chat/completions'
+    apiKey: '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',
+    model: 'llama-3.3-70b-versatile',
+    endpoint: 'https://api.groq.com/openai/v1/chat/completions'
   },
   openai: {
     apiKey: '',
