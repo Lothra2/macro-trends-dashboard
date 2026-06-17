@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Intelligence Hub · Retailer Intelligence 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="../data/data.js"></script>
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ─── RESET ────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#080F1E}
+
+/* ─── DESIGN TOKENS ─────────────────────────────────────────── */
+:root{
+  --bg:#080F1E;
+  --bg-2:#0D1729;
+  --bg-3:#111E35;
+  --glass:rgba(255,255,255,0.04);
+  --glass-hover:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);
+  --border-strong:rgba(255,255,255,0.15);
+  --text-1:#F1F5F9;
+  --text-2:#94A3B8;
+  --text-3:#475569;
+  --emerald:#10B981;
+  --emerald-glow:rgba(16,185,129,0.25);
+  --blue:#3B82F6;
+  --blue-glow:rgba(59,130,246,0.25);
+  --amber:#F59E0B;
+  --amber-glow:rgba(245,158,11,0.25);
+  --rose:#EF4444;
+  --rose-glow:rgba(239,68,68,0.25);
+  --cyan:#06B6D4;
+  --cyan-glow:rgba(6,182,212,0.2);
+  --navy-deep:#060D1C;
+  --header-h:60px;
+  --nav-w:220px;
+}
+
+/* ─── DOT GRID BG ───────────────────────────────────────────── */
+body{
+  font-family:'Inter',sans-serif;
+  color:var(--text-1);
+  font-size:14px;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,0.045) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+
+/* ─── LAYOUT ────────────────────────────────────────────────── */
+#app{display:flex;flex-direction:column;height:100vh;position:relative}
+#header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:var(--header-h);
+  background:rgba(8,15,30,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;z-index:200;position:relative;
+}
+#body{display:flex;flex:1;overflow:hidden;position:relative}
+
+/* ─── HEADER ─────────────────────────────────────────────────── */
+.h-logo{display:flex;align-items:center;gap:12px;min-width:220px}
+.h-logo-icon{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fira Code',monospace;font-weight:700;font-size:12px;color:#fff;
+  letter-spacing:-0.5px;
+  box-shadow:0 0 20px rgba(59,130,246,0.4);
+}
+.h-logo-text{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--text-1);letter-spacing:-0.3px}
+.h-logo-sub{font-size:10px;color:var(--text-3);font-weight:400;margin-top:1px;letter-spacing:0.5px}
+
+.h-center{display:flex;align-items:center;gap:10px;flex:1;justify-content:center}
+
+/* Country selector dropdown */
+.country-wrap{position:relative;display:flex;align-items:center;gap:8px}
+.country-flag{font-size:20px;line-height:1}
+#market-select{
+  background:var(--glass);
+  border:1px solid var(--border-strong);
+  border-radius:10px;
+  padding:8px 36px 8px 14px;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+  color:var(--text-1);
+  cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;
+  transition:all 0.2s;min-width:200px;
+}
+#market-select:hover{background:var(--glass-hover);border-color:var(--blue);box-shadow:0 0 12px rgba(59,130,246,0.2)}
+#market-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,0.15)}
+#market-select option{background:#0D1729;color:var(--text-1);font-weight:500}
+#market-select optgroup{background:#060D1C;color:var(--text-3);font-size:11px}
+.country-chevron{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--text-2);pointer-events:none;font-size:10px;
+}
+
+.h-right{display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end}
+.vintage-chip{
+  background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);
+  color:var(--cyan);font-family:'Fira Code',monospace;font-size:10px;font-weight:600;
+  padding:4px 10px;border-radius:6px;letter-spacing:0.5px;white-space:nowrap;
+}
+.slide-counter-pill{
+  font-family:'Fira Code',monospace;font-size:12px;color:var(--text-3);
+  background:var(--glass);border:1px solid var(--border);
+  padding:4px 12px;border-radius:20px;
+}
+.icon-btn{
+  width:36px;height:36px;border-radius:9px;
+  border:1px solid var(--border);
+  background:var(--glass);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);font-size:15px;
+  transition:all 0.2s;position:relative;
+}
+.icon-btn:hover{background:var(--glass-hover);border-color:var(--border-strong);color:var(--text-1);transform:translateY(-1px)}
+.icon-btn[title]:hover::after{
+  content:attr(title);position:absolute;bottom:-32px;left:50%;transform:translateX(-50%);
+  background:#1E2D45;border:1px solid var(--border);
+  color:var(--text-2);font-size:10px;font-family:'Inter',sans-serif;
+  padding:4px 8px;border-radius:6px;white-space:nowrap;z-index:999;pointer-events:none;
+}
+.ai-btn-header{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:9px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(6,182,212,0.15));
+  border:1px solid rgba(59,130,246,0.35);
+  color:var(--blue);cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+  transition:all 0.2s;white-space:nowrap;
+}
+.ai-btn-header:hover{background:linear-gradient(135deg,rgba(59,130,246,0.35),rgba(6,182,212,0.25));box-shadow:0 0 16px rgba(59,130,246,0.2)}
+
+/* ─── SLIDE AREA ─────────────────────────────────────────────── */
+#slide-area{
+  flex:1;position:relative;overflow:hidden;
+}
+.slide{
+  position:absolute;inset:0;
+  padding:0;
+  opacity:0;pointer-events:none;
+  transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),opacity 0.4s ease;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0) !important}
+.slide.slide-exit-left{transform:translateX(-100%);opacity:0}
+.slide.slide-enter-right{transform:translateX(100%);opacity:0}
+.slide.slide-exit-right{transform:translateX(100%);opacity:0}
+.slide.slide-enter-left{transform:translateX(-100%);opacity:0}
+
+/* ─── SLIDE INNER SCROLL ─────────────────────────────────────── */
+.slide-inner{
+  flex:1;overflow-y:auto;padding:40px 48px 32px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent;
+}
+.slide-inner::-webkit-scrollbar{width:3px}
+.slide-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+/* ─── SLIDE TITLES ───────────────────────────────────────────── */
+.slide-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;
+  color:var(--text-1);letter-spacing:-0.5px;margin-bottom:4px;
+  line-height:1.1;
+}
+.slide-subtitle{font-size:13px;color:var(--text-2);margin-bottom:24px;font-weight:400}
+.slide-rule{
+  height:1px;
+  background:linear-gradient(90deg,rgba(59,130,246,0.5),rgba(6,182,212,0.3),transparent);
+  margin-bottom:28px;border-radius:1px;
+}
+
+/* ─── GLASS CARD ────────────────────────────────────────────── */
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.card:hover{border-color:var(--border-strong)}
+.card-sm{border-radius:12px;padding:14px 16px}
+.card-label{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.card-value{
+  font-family:'Fira Code',monospace;font-size:clamp(1.6rem,3vw,2.2rem);
+  font-weight:700;color:var(--text-1);line-height:1;
+}
+.card-sub{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.4}
+
+/* Signal-tinted cards */
+.card-growing{border-color:rgba(16,185,129,0.3);box-shadow:0 0 30px rgba(16,185,129,0.08)}
+.card-stable{border-color:rgba(59,130,246,0.3);box-shadow:0 0 30px rgba(59,130,246,0.08)}
+.card-pressured{border-color:rgba(245,158,11,0.3);box-shadow:0 0 30px rgba(245,158,11,0.08)}
+.card-volatile{border-color:rgba(239,68,68,0.3);box-shadow:0 0 30px rgba(239,68,68,0.08)}
+
+/* ─── KPI HERO NUMBER ─────────────────────────────────────────── */
+.kpi-hero{
+  font-family:'Fira Code',monospace;
+  font-size:clamp(3rem,7vw,6rem);
+  font-weight:700;line-height:1;
+  letter-spacing:-2px;
+}
+
+/* ─── SIGNAL PILL ─────────────────────────────────────────────── */
+.signal{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:99px;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:0.8px;text-transform:uppercase;
+}
+.signal-dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:sigpulse 1.6s ease infinite}
+@keyframes sigpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+.signal-growing{color:var(--emerald);background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3)}
+.signal-stable{color:var(--blue);background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3)}
+.signal-pressured{color:var(--amber);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3)}
+.signal-volatile{color:var(--rose);background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3)}
+
+/* Large signal on slide 5 */
+.signal-xl{font-size:clamp(1.5rem,4vw,3rem);padding:16px 40px;gap:14px;letter-spacing:1.5px}
+.signal-xl .signal-dot{width:14px;height:14px}
+
+/* ─── GRID HELPERS ────────────────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.g-25{display:grid;grid-template-columns:2fr 5fr;gap:20px}
+.g-12{display:grid;grid-template-columns:1fr 2fr;gap:20px}
+
+/* ─── ANIMATED BARS ───────────────────────────────────────────── */
+.gauge-row{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:var(--glass);border:1px solid var(--border);border-radius:12px;
+  transition:border-color 0.2s;
+}
+.gauge-row:hover{border-color:var(--border-strong)}
+.gauge-label-text{flex:0 0 180px;font-size:12px;color:var(--text-2);font-weight:500}
+.gauge-track{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;position:relative}
+.gauge-fill{height:100%;border-radius:4px;width:0%;transition:width 0.9s cubic-bezier(0.22,1,0.36,1)}
+.gauge-val{flex:0 0 52px;text-align:right;font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:var(--text-1)}
+
+/* ─── BAR COMPARE ─────────────────────────────────────────────── */
+.bar-compare{margin-bottom:14px}
+.bar-compare-hdr{display:flex;justify-content:space-between;margin-bottom:5px}
+.bar-compare-lbl{font-size:12px;color:var(--text-2);font-weight:500}
+.bar-compare-val{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:var(--text-1)}
+.bar-track{height:8px;background:rgba(255,255,255,0.06);border-radius:4px;position:relative;overflow:visible}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.8s cubic-bezier(0.22,1,0.36,1)}
+.bar-avg{
+  position:absolute;top:-4px;height:16px;width:2px;
+  background:rgba(255,255,255,0.3);border-radius:1px;z-index:2;
+}
+.bar-avg::after{
+  content:attr(data-label);position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  font-size:9px;color:var(--text-3);white-space:nowrap;font-family:'Inter',sans-serif;
+  background:var(--bg-2);padding:2px 6px;border-radius:4px;
+}
+
+/* ─── CHART CARD ──────────────────────────────────────────────── */
+.chart-card{
+  background:var(--glass);backdrop-filter:blur(12px);
+  border:1px solid var(--border);border-radius:16px;padding:20px;
+}
+.chart-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.chart-wrap{position:relative;height:200px}
+
+/* ─── INSIGHT BOX ─────────────────────────────────────────────── */
+.insight{
+  background:rgba(59,130,246,0.06);
+  border:1px solid rgba(59,130,246,0.2);
+  border-radius:12px;padding:14px 16px;
+  display:flex;gap:10px;align-items:flex-start;
+  font-size:13px;color:var(--text-2);line-height:1.6;
+}
+.insight-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ─── TREND TAG ───────────────────────────────────────────────── */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:6px;
+  font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;
+  font-family:'Space Grotesk',sans-serif;
+}
+.tag-blue{background:rgba(59,130,246,0.12);color:var(--blue);border:1px solid rgba(59,130,246,0.2)}
+.tag-emerald{background:rgba(16,185,129,0.12);color:var(--emerald);border:1px solid rgba(16,185,129,0.2)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.tag-rose{background:rgba(239,68,68,0.12);color:var(--rose);border:1px solid rgba(239,68,68,0.2)}
+
+/* ─── RECOMMENDATION CARDS ────────────────────────────────────── */
+.rec-card{
+  background:var(--glass);border:1px solid var(--border);border-radius:16px;
+  padding:20px;display:flex;flex-direction:column;gap:10px;
+}
+.rec-badge{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
+.rec-badge-opp{background:rgba(16,185,129,0.12);color:var(--emerald);border:1px solid rgba(16,185,129,0.2)}
+.rec-badge-risk{background:rgba(239,68,68,0.12);color:var(--rose);border:1px solid rgba(239,68,68,0.2)}
+.rec-badge-watch{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.rec-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-1)}
+.rec-body{font-size:12px;color:var(--text-2);line-height:1.6}
+
+/* ─── TAKEAWAY ────────────────────────────────────────────────── */
+.takeaway{
+  background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(6,182,212,0.08));
+  border:1px solid rgba(59,130,246,0.25);border-radius:14px;
+  padding:18px 22px;margin-top:16px;
+}
+.takeaway-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--blue);text-transform:uppercase;margin-bottom:8px}
+.takeaway-text{font-size:14px;line-height:1.65;color:var(--text-1)}
+
+/* ─── RIGHT DOTS NAV ──────────────────────────────────────────── */
+#dots-nav{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;z-index:300;
+}
+.dot-item{
+  display:flex;align-items:center;justify-content:flex-end;gap:8px;cursor:pointer;
+  padding:2px 0;
+}
+.dot-circle{
+  width:8px;height:8px;border-radius:4px;
+  background:rgba(255,255,255,0.2);
+  transition:all 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.dot-item.active .dot-circle{
+  width:8px;height:24px;background:var(--blue);
+  box-shadow:0 0 12px rgba(59,130,246,0.5);
+}
+.dot-item:hover .dot-circle{background:rgba(255,255,255,0.45)}
+.dot-tooltip{
+  position:absolute;right:24px;
+  background:rgba(13,23,41,0.95);border:1px solid var(--border);
+  color:var(--text-2);font-size:10px;font-family:'Inter',sans-serif;font-weight:500;
+  padding:4px 8px;border-radius:6px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity 0.15s;
+}
+.dot-item:hover .dot-tooltip{opacity:1}
+
+/* ─── BOTTOM NAV BAR ──────────────────────────────────────────── */
+#bottom-bar{
+  position:relative;height:52px;
+  background:rgba(8,15,30,0.95);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:10px;
+  z-index:200;flex-shrink:0;
+}
+.nav-btn{
+  width:34px;height:34px;border-radius:8px;
+  border:1px solid var(--border);background:var(--glass);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);font-size:16px;transition:all 0.2s;
+}
+.nav-btn:hover{background:var(--glass-hover);border-color:var(--border-strong);color:var(--text-1)}
+.nav-btn:disabled{opacity:0.25;cursor:not-allowed}
+.bar-spacer{flex:1}
+
+/* ─── AI TERMINAL ─────────────────────────────────────────────── */
+.ai-terminal{
+  background:#0A1628;border:1px solid rgba(16,185,129,0.25);border-radius:14px;
+  padding:20px 24px;min-height:180px;position:relative;overflow:hidden;
+}
+.ai-terminal::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 23px,rgba(16,185,129,0.02) 24px);
+  pointer-events:none;
+}
+.ai-terminal-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;
+  border-bottom:1px solid rgba(16,185,129,0.15);
+}
+.ai-term-dot{width:10px;height:10px;border-radius:50%}
+.ai-term-text{font-family:'Fira Code',monospace;font-size:11px;color:rgba(16,185,129,0.5);margin-left:8px;letter-spacing:1px}
+.ai-output{
+  font-family:'Fira Code',monospace;font-size:13px;
+  color:#10B981;line-height:1.7;position:relative;z-index:1;
+  white-space:pre-wrap;
+}
+.ai-cursor{
+  display:inline-block;width:8px;height:14px;background:#10B981;
+  vertical-align:text-bottom;margin-left:2px;
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-placeholder-msg{
+  font-family:'Fira Code',monospace;font-size:13px;color:rgba(16,185,129,0.35);
+  line-height:1.7;position:relative;z-index:1;
+}
+.ai-placeholder-msg .ai-cursor{background:rgba(16,185,129,0.4)}
+.ai-spinner-wrap{display:flex;align-items:center;gap:10px;padding:8px 0;position:relative;z-index:1}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:aidot 1.2s ease infinite}
+.ai-dot:nth-child(2){animation-delay:0.2s}
+.ai-dot:nth-child(3){animation-delay:0.4s}
+@keyframes aidot{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+.ai-spin-text{font-family:'Fira Code',monospace;font-size:12px;color:rgba(16,185,129,0.6)}
+.ai-error{font-family:'Fira Code',monospace;font-size:13px;color:var(--rose);position:relative;z-index:1}
+.ai-no-key-msg{
+  background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;
+  padding:10px 14px;font-size:12px;color:var(--amber);position:relative;z-index:1;
+}
+.ai-actions-row{display:flex;gap:8px;margin-top:16px;position:relative;z-index:1}
+.ai-action-btn{
+  display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;
+  border:1px solid var(--emerald);background:rgba(16,185,129,0.1);
+  color:var(--emerald);cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+  transition:all 0.2s;
+}
+.ai-action-btn:hover{background:rgba(16,185,129,0.2);box-shadow:0 0 14px rgba(16,185,129,0.2)}
+.ai-action-btn-ghost{background:transparent;border-color:rgba(255,255,255,0.15);color:var(--text-3)}
+.ai-action-btn-ghost:hover{background:var(--glass-hover);color:var(--text-2);box-shadow:none}
+.provider-pill-row{display:flex;align-items:center;gap:6px;margin-bottom:14px}
+.provider-pill{
+  padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;
+  font-family:'Space Grotesk',sans-serif;cursor:pointer;
+  border:1px solid var(--border);background:var(--glass);color:var(--text-3);
+  transition:all 0.2s;letter-spacing:0.3px;
+}
+.provider-pill.active{border-color:var(--blue);background:rgba(59,130,246,0.15);color:var(--blue)}
+
+/* ─── SETTINGS MODAL ──────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(6,13,28,0.75);
+  backdrop-filter:blur(8px);z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:#0D1729;border:1px solid rgba(255,255,255,0.12);border-radius:20px;
+  width:460px;max-width:95vw;padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  transform:translateY(12px) scale(0.98);transition:transform 0.25s;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--text-3);margin-bottom:22px}
+.modal-label{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-top:18px;margin-bottom:8px}
+.seg-ctrl{display:flex;gap:4px;background:rgba(255,255,255,0.04);border-radius:10px;padding:4px;border:1px solid var(--border)}
+.seg-btn{
+  flex:1;padding:8px;border-radius:7px;border:none;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+  color:var(--text-3);background:transparent;transition:all 0.2s;
+}
+.seg-btn.active{background:rgba(59,130,246,0.2);color:var(--blue);border:1px solid rgba(59,130,246,0.3)}
+.modal-input{
+  width:100%;padding:10px 14px;
+  border:1px solid var(--border);border-radius:10px;
+  font-family:'Fira Code',monospace;font-size:13px;color:var(--text-1);
+  background:rgba(255,255,255,0.04);outline:none;transition:all 0.2s;
+}
+.modal-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,0.12)}
+.modal-input-help{font-size:11px;color:var(--text-3);margin-top:5px}
+.modal-input-help a{color:var(--blue);text-decoration:none}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
+.modal-btn{
+  padding:9px 18px;border-radius:9px;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);background:var(--glass);color:var(--text-2);transition:all 0.2s;
+}
+.modal-btn:hover{background:var(--glass-hover);color:var(--text-1)}
+.modal-btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.modal-btn-primary:hover{background:#2563EB;box-shadow:0 0 16px rgba(59,130,246,0.35)}
+
+/* ─── STAGGER ANIMATIONS ──────────────────────────────────────── */
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeSlideUp 0.45s ease both}
+.d1{animation-delay:0ms}
+.d2{animation-delay:80ms}
+.d3{animation-delay:160ms}
+.d4{animation-delay:240ms}
+.d5{animation-delay:320ms}
+.d6{animation-delay:400ms}
+.d7{animation-delay:480ms}
+
+/* ─── COVER SLIDE ─────────────────────────────────────────────── */
+.cover-hero{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:40px 48px;position:relative;overflow:hidden;
+}
+.cover-glow{
+  position:absolute;top:-100px;right:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cover-glow-2{
+  position:absolute;bottom:-120px;left:-60px;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(6,182,212,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cover-market-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(3rem,8vw,7rem);
+  font-weight:700;color:var(--text-1);
+  line-height:0.95;letter-spacing:-3px;
+  margin-bottom:20px;
+}
+.cover-region-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:8px;
+  border:1px solid var(--border-strong);background:var(--glass);
+  font-size:12px;font-weight:600;color:var(--text-2);
+  margin-bottom:18px;width:fit-content;
+}
+.cover-divider{
+  height:2px;max-width:360px;margin:20px 0;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),transparent);
+  border-radius:1px;
+}
+.cover-kpi-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.cover-kpi{
+  background:var(--glass);border:1px solid var(--border);border-radius:14px;
+  padding:14px 20px;min-width:130px;
+}
+.cover-kpi-lbl{font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.cover-kpi-val{font-family:'Fira Code',monospace;font-size:clamp(1.4rem,3vw,2rem);font-weight:700;color:var(--text-1);line-height:1}
+.cover-foot{font-size:10px;color:var(--text-3);margin-top:20px;letter-spacing:0.5px}
+
+/* ─── MISC ────────────────────────────────────────────────────── */
+.price-tag{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--glass);border:1px solid var(--border-strong);border-radius:14px;
+  padding:14px 20px;
+}
+.price-tag-val{font-family:'Fira Code',monospace;font-size:2rem;font-weight:700;color:var(--text-1)}
+.price-tag-lbl{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+
+.context-strip{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:12px 16px;background:var(--glass);border:1px solid var(--border);border-radius:10px;
+  margin-top:14px;
+}
+.context-item{font-family:'Fira Code',monospace;font-size:11px;color:var(--text-2)}
+.context-sep{width:1px;height:14px;background:var(--border-strong)}
+
+/* scroll-fix for taller slides */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+.exporting{opacity:0.55;pointer-events:none}
+
+/* ─── SLIDE 11 — CORRELATION EXPLORER ─────────────────────────── */
+.corr-controls{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:14px 18px;background:var(--glass);border:1px solid var(--border);
+  border-radius:12px;margin-bottom:18px;
+}
+.corr-select{
+  background:var(--bg-2);border:1px solid var(--border-strong);border-radius:8px;
+  padding:7px 32px 7px 12px;font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:600;color:var(--text-1);
+  cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;
+  transition:all 0.2s;
+}
+.corr-select:hover{border-color:var(--cyan);box-shadow:0 0 10px rgba(6,182,212,0.15)}
+.corr-select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,0.1)}
+.corr-select option{background:#0D1729;color:var(--text-1)}
+.corr-select-wrap{position:relative}
+.corr-select-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-2);pointer-events:none;font-size:10px}
+.corr-label{font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:0.5px;white-space:nowrap}
+.corr-sep{width:1px;height:24px;background:var(--border-strong);flex-shrink:0}
+.corr-check-wrap{display:flex;align-items:center;gap:8px}
+.corr-checkbox{width:16px;height:16px;accent-color:var(--emerald);cursor:pointer;border-radius:4px}
+.corr-chart-wrap{position:relative;height:320px;margin-bottom:18px}
+.corr-bar-section{
+  background:var(--glass);border:1px solid var(--border);border-radius:12px;
+  padding:16px 20px;
+}
+.corr-bar-label{font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.corr-r-display{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.corr-r-value{font-family:'Fira Code',monospace;font-size:1.5rem;font-weight:700;color:var(--cyan);min-width:60px}
+.corr-r-interp{font-size:13px;color:var(--text-2)}
+.corr-track{position:relative;height:10px;background:linear-gradient(90deg,#EF4444,#F59E0B,rgba(255,255,255,0.1),#10B981,#06B6D4);border-radius:5px;overflow:visible}
+.corr-pointer{position:absolute;top:-4px;width:18px;height:18px;border-radius:50%;background:var(--text-1);border:2px solid var(--bg-2);box-shadow:0 0 8px rgba(0,0,0,0.5);transform:translateX(-50%);transition:left 0.4s cubic-bezier(0.22,1,0.36,1)}
+.corr-track-labels{display:flex;justify-content:space-between;margin-top:5px}
+.corr-track-lbl{font-family:'Fira Code',monospace;font-size:10px;color:var(--text-3)}
+
+/* ─── SLIDE 12 — METHODOLOGY & GUIDE ─────────────────────────── */
+.guide-two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.guide-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:0}
+.guide-card-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.guide-step{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.guide-step:last-child{border-bottom:none}
+.guide-step-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Fira Code',monospace;font-size:10px;font-weight:700;color:#fff;margin-top:1px}
+.guide-step-text{font-size:12px;color:var(--text-2);line-height:1.55}
+.kpi-list{display:flex;flex-direction:column;gap:0;overflow-y:auto;max-height:310px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.kpi-def{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11.5px;color:var(--text-2);line-height:1.5}
+.kpi-def:last-child{border-bottom:none}
+.kpi-def strong{color:var(--text-1);font-weight:600}
+.guide-sources{
+  background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.15);
+  border-radius:12px;padding:14px 18px;
+}
+.guide-sources-row{display:flex;flex-wrap:wrap;gap:6px 20px;margin-bottom:6px}
+.guide-src-item{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:5px}
+.guide-src-item::before{content:'·';color:var(--blue)}
+.guide-disclaimer{font-size:10px;color:var(--text-3);margin-top:6px;font-style:italic}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════ -->
+  <header id="header">
+    <div class="h-logo">
+      <div class="h-logo-icon">MIH</div>
+      <div>
+        <div class="h-logo-text">Market Intelligence Hub</div>
+        <div class="h-logo-sub">RETAILER INTELLIGENCE · 2025</div>
+      </div>
+    </div>
+
+    <div class="h-center">
+      <div class="country-wrap">
+        <select id="market-select"></select>
+        <span class="country-chevron">▾</span>
+      </div>
+    </div>
+
+    <div class="h-right">
+      <span class="vintage-chip" id="vintage-chip">2025-Q4 / 2026-Q1</span>
+      <span class="slide-counter-pill" id="slide-counter">1 / 12</span>
+      <button class="ai-btn-header" id="btn-ai">✦ AI Analyst</button>
+      <button class="icon-btn" id="btn-pdf" title="Export PDF">⇓ PDF</button>
+      <button class="icon-btn" id="btn-png" title="Export PNG">⬡ PNG</button>
+      <button class="icon-btn" id="btn-settings" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ════════════════════════════════════════════════ -->
+  <div id="body">
+    <!-- SLIDE AREA -->
+    <div id="slide-area"><!-- slides injected dynamically --></div>
+  </div>
+
+  <!-- ═══ BOTTOM BAR ════════════════════════════════════════ -->
+  <div id="bottom-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous (←)">←</button>
+    <button class="nav-btn" id="btn-next" title="Next (→)">→</button>
+    <div class="bar-spacer"></div>
+    <span style="font-size:11px;color:var(--text-3);font-family:'Inter',sans-serif">
+      Data: IMF WEO 2025 · ILO · World Bank · The Economist &nbsp;·&nbsp; Market Intelligence Hub
+    </span>
+  </div>
+</div>
+
+<!-- ═══ DOTS NAV ════════════════════════════════════════════ -->
+<nav id="dots-nav"></nav>
+
+<!-- ═══ SETTINGS MODAL ══════════════════════════════════════ -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-box">
+    <div class="modal-title">Settings</div>
+    <div class="modal-sub">Configure AI provider and API keys</div>
+    <div class="modal-label">AI Provider</div>
+    <div class="seg-ctrl">
+      <button class="seg-btn" id="seg-grok" onclick="switchProvider('grok')">Grok (x.ai)</button>
+      <button class="seg-btn" id="seg-openai" onclick="switchProvider('openai')">GPT-5 (OpenAI)</button>
+    </div>
+    <div id="provider-grok-section">
+      <div class="modal-label">Grok API Key</div>
+      <input type="password" class="modal-input" id="grok-key-input" placeholder="xai-...">
+      <div class="modal-input-help">Get your key at <a href="https://x.ai" target="_blank">x.ai</a></div>
+    </div>
+    <div id="provider-openai-section" style="display:none">
+      <div class="modal-label">GPT-5 API Key</div>
+      <input type="password" class="modal-input" id="openai-key-input" placeholder="sk-...">
+      <div class="modal-input-help">Get your key at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></div>
+    </div>
+    <div class="modal-input-help" style="margin-top:12px">Keys stored in session memory. For persistence, edit <code>../config.js</code></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeSettings()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let currentMarket = null;
+let currentSlide = 0;
+let currentProvider = window.MIH_CONFIG?.defaultProvider || 'grok';
+let charts = {};
+let aiGeneratedText = {};
+let isExporting = false;
+let isAnimating = false;
+
+const SLIDE_LABELS = [
+  'Cover', 'Macro Snapshot', 'Consumer Power',
+  'Digital & E-Commerce', 'FMCG Signal', 'GDP Trajectory',
+  'Inflation Trajectory', 'Regional Benchmark',
+  'AI Analyst', 'Summary', 'Correlation', 'Guide'
+];
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function fmt(n, d=1){ if(n==null)return'N/A'; if(Math.abs(n)>=1000)return(n/1000).toFixed(2)+'B'; return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function fmtPop(n){ if(n==null)return'N/A'; if(n>=1000)return(n/1000).toFixed(2)+'B'; return n.toFixed(1)+'M'; }
+function fmtGDP(n){ if(n==null)return'N/A'; return'$'+n.toLocaleString('en-US'); }
+function fmtPct(n,d=1){ if(n==null)return'N/A'; return(n>0?'+':'')+Number(n).toFixed(d)+'%'; }
+function fmtPctPlain(n,d=1){ if(n==null)return'N/A'; return Number(n).toFixed(d)+'%'; }
+function signalClass(sig){ return{Growing:'signal-growing',Stable:'signal-stable',Pressured:'signal-pressured',Volatile:'signal-volatile'}[sig]||'signal-stable'; }
+function signalCardClass(sig){ return{Growing:'card-growing',Stable:'card-stable',Pressured:'card-pressured',Volatile:'card-volatile'}[sig]||''; }
+function signalColor(sig){ return{Growing:'var(--emerald)',Stable:'var(--blue)',Pressured:'var(--amber)',Volatile:'var(--rose)'}[sig]||'var(--blue)'; }
+function signalGlow(sig){ return{Growing:'var(--emerald-glow)',Stable:'var(--blue-glow)',Pressured:'var(--amber-glow)',Volatile:'var(--rose-glow)'}[sig]||'var(--blue-glow)'; }
+function regionColor(r){ return{APAC:'#3B82F6',Europe:'#8B5CF6',Americas:'#F59E0B',MEA:'#10B981'}[r]||'#3B82F6'; }
+function inflationColor(v){ if(v==null)return'var(--text-1)'; if(v>6)return'var(--rose)'; if(v<2.5)return'var(--emerald)'; return'var(--amber)'; }
+function destroyChart(id){ if(charts[id]){try{charts[id].destroy();}catch(e){}delete charts[id];} }
+function getRegionMarkets(region){ return window.MIH_DATA.markets.filter(m=>m.region===region); }
+function regionAvg(region,field){ const ms=getRegionMarkets(region).filter(m=>m[field]!=null); if(!ms.length)return null; return ms.reduce((s,m)=>s+m[field],0)/ms.length; }
+function ecommerceLabel(pct){ if(pct==null)return{label:'N/A',cls:'tag-blue'}; if(pct>30)return{label:'Digital-First Market',cls:'tag-blue'}; if(pct>15)return{label:'Growing Digital',cls:'tag-emerald'}; if(pct>5)return{label:'Developing Digital',cls:'tag-amber'}; return{label:'Early Stage',cls:'tag-rose'}; }
+function gdpTrendTag(hist){ if(!hist)return{label:'N/A',cls:'tag-blue'}; const v22=hist['2022'],v25=hist['2025']; if(v25==null||v22==null)return{label:'N/A',cls:'tag-blue'}; const d=v25-v22; if(d>0.5)return{label:'Recovery',cls:'tag-emerald'}; if(d<-0.5)return{label:'Decelerating',cls:'tag-rose'}; return{label:'Stable',cls:'tag-blue'}; }
+function inflationTrendTag(hist){ if(!hist)return{label:'N/A',cls:'tag-blue'}; const v25=hist['2025']; if(v25==null)return{label:'N/A',cls:'tag-blue'}; if(v25<=3)return{label:'Normalizing',cls:'tag-emerald'}; if(v25<=8)return{label:'Elevated',cls:'tag-amber'}; return{label:'Critical',cls:'tag-rose'}; }
+function macroInsight(m){ let p=[]; if(m.gdp_growth>4)p.push(`Strong GDP expansion of ${fmtPctPlain(m.gdp_growth)} signals robust economic momentum.`); else if(m.gdp_growth>2)p.push(`Moderate GDP growth of ${fmtPctPlain(m.gdp_growth)} reflects a stable but measured expansion.`); else if(m.gdp_growth>0)p.push(`GDP growth of ${fmtPctPlain(m.gdp_growth)} indicates a subdued economic environment.`); else p.push(`Negative GDP growth of ${fmtPctPlain(m.gdp_growth)} signals economic contraction.`); if(m.inflation>15)p.push(`Inflation at ${fmtPctPlain(m.inflation)} is critically elevated, compressing purchasing power.`); else if(m.inflation>6)p.push(`Elevated inflation of ${fmtPctPlain(m.inflation)} is squeezing consumer budgets and margins.`); else if(m.inflation<1)p.push(`Near-zero inflation of ${fmtPctPlain(m.inflation)} may signal deflationary risks.`); else p.push(`Inflation of ${fmtPctPlain(m.inflation)} remains within a manageable range.`); return p.join(' '); }
+function consumerInsight(m){ let out=''; if(m.gdp_pc_ppp>50000)out=`High purchasing power economy. GDP per capita PPP of ${fmtGDP(m.gdp_pc_ppp)} places ${m.name} in premium consumption territory.`; else if(m.gdp_pc_ppp>20000)out=`Middle-income market with GDP per capita PPP of ${fmtGDP(m.gdp_pc_ppp)} — strong FMCG potential.`; else out=`Emerging market with GDP per capita PPP of ${fmtGDP(m.gdp_pc_ppp)} — price sensitivity will be key.`; if(m.unemployment_pct>15)out+=` High unemployment of ${fmtPctPlain(m.unemployment_pct)} is a headwind for consumer spending.`; return out; }
+function caInsight(m){ const ca=m.current_account_pct; if(ca==null)return'Current account data unavailable.'; if(ca>5)return`Strong current account surplus of ${fmtPctPlain(ca)} of GDP — positive for currency stability.`; if(ca>0)return`Modest current account surplus of ${fmtPctPlain(ca)} of GDP — broadly balanced external position.`; if(ca>-3)return`Current account deficit of ${fmtPctPlain(Math.abs(ca))} of GDP is within sustainable range.`; return`Significant current account deficit of ${fmtPctPlain(Math.abs(ca))} of GDP — monitor FX and import dependency.`; }
+
+// Count-up animation
+function countUp(el,target,decimals,prefix,suffix,duration=800){
+  if(!el)return;
+  const steps=Math.ceil(duration/16);
+  let count=0;
+  const inc=target/steps;
+  let current=0;
+  const id=setInterval(()=>{
+    count++;current+=inc;
+    if(count>=steps){current=target;clearInterval(id);}
+    el.textContent=prefix+Math.abs(current).toFixed(decimals)+suffix;
+  },16);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MARKET SELECTOR
+// ═══════════════════════════════════════════════════════════════
+function buildMarketSelector(){
+  const sel=document.getElementById('market-select');
+  sel.innerHTML='';
+  ['Americas','LATAM','WE','EEMEA','APAC'].forEach(region=>{
+    const grp=document.createElement('optgroup');
+    grp.label=region;
+    window.MIH_DATA.markets.filter(m=>m.region===region).forEach(m=>{
+      const opt=document.createElement('option');
+      opt.value=m.id;
+      opt.textContent=m.flag ? m.flag+' '+m.name : m.name;
+      grp.appendChild(opt);
+    });
+    sel.appendChild(grp);
+  });
+  sel.addEventListener('change',()=>{
+    const mkt=window.MIH_DATA.markets.find(m=>m.id===sel.value);
+    if(mkt)loadMarket(mkt);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DOTS NAV
+// ═══════════════════════════════════════════════════════════════
+function buildDotsNav(){
+  const nav=document.getElementById('dots-nav');
+  nav.innerHTML='';
+  SLIDE_LABELS.forEach((label,i)=>{
+    const item=document.createElement('div');
+    item.className='dot-item'+(i===currentSlide?' active':'');
+    item.innerHTML=`<div class="dot-tooltip">${i+1}. ${label}</div><div class="dot-circle"></div>`;
+    item.addEventListener('click',()=>goToSlide(i,i>currentSlide?'right':'left'));
+    nav.appendChild(item);
+  });
+}
+function updateDotsNav(){
+  document.querySelectorAll('.dot-item').forEach((el,i)=>el.classList.toggle('active',i===currentSlide));
+  document.getElementById('slide-counter').textContent=(currentSlide+1)+' / 12';
+  document.getElementById('btn-prev').disabled=currentSlide===0;
+  document.getElementById('btn-next').disabled=currentSlide===11;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function goToSlide(i,direction){
+  if(i===currentSlide||isAnimating)return;
+  isAnimating=true;
+  const slides=document.querySelectorAll('.slide');
+  if(!slides[i])return;
+  const dir=direction||(i>currentSlide?'right':'left');
+  const prevSlide=slides[currentSlide];
+  const nextSlide=slides[i];
+
+  // position incoming slide
+  nextSlide.classList.remove('active','slide-exit-left','slide-exit-right','slide-enter-left','slide-enter-right');
+  nextSlide.classList.add(dir==='right'?'slide-enter-right':'slide-enter-left');
+  nextSlide.style.display='flex';
+
+  // force reflow
+  void nextSlide.offsetWidth;
+
+  // animate both
+  prevSlide.classList.remove('active');
+  prevSlide.classList.add(dir==='right'?'slide-exit-left':'slide-exit-right');
+  nextSlide.classList.remove('slide-enter-left','slide-enter-right');
+  nextSlide.classList.add('active');
+
+  setTimeout(()=>{
+    prevSlide.classList.remove('slide-exit-left','slide-exit-right');
+    prevSlide.style.display='';
+    isAnimating=false;
+  },420);
+
+  currentSlide=i;
+  updateDotsNav();
+  triggerSlideAnimations(i);
+  setTimeout(()=>triggerCharts(i),80);
+}
+
+function triggerSlideAnimations(idx){
+  const slide=document.querySelectorAll('.slide')[idx];
+  if(!slide)return;
+  slide.querySelectorAll('.anim').forEach(el=>{
+    el.style.animation='none';
+    void el.offsetWidth;
+    el.style.animation='';
+  });
+  slide.querySelectorAll('[data-countup]').forEach(el=>{
+    const target=parseFloat(el.getAttribute('data-countup'));
+    const decimals=parseInt(el.getAttribute('data-decimals')||'1');
+    const prefix=el.getAttribute('data-prefix')||'';
+    const suffix=el.getAttribute('data-suffix')||'';
+    countUp(el,target,decimals,prefix,suffix,800);
+  });
+  // animate gauge bars
+  setTimeout(()=>{
+    slide.querySelectorAll('.gauge-fill[data-width]').forEach(el=>{
+      el.style.width=el.getAttribute('data-width')+'%';
+    });
+    slide.querySelectorAll('.bar-fill[data-width]').forEach(el=>{
+      el.style.width=el.getAttribute('data-width')+'%';
+    });
+  },250);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUILD SLIDES
+// ═══════════════════════════════════════════════════════════════
+function buildAllSlides(m){
+  destroyChart('gdp');destroyChart('inflation');
+  const area=document.getElementById('slide-area');
+  area.innerHTML='';
+  [buildSlide1,buildSlide2,buildSlide3,buildSlide4,buildSlide5,
+   buildSlide6,buildSlide7,buildSlide8,buildSlide9,buildSlide10,
+   buildSlide11,buildSlide12].forEach((fn,i)=>{
+    const div=document.createElement('div');
+    div.className='slide'+(i===0?' active':'');
+    div.id=`slide-${i}`;
+    if(i!==0)div.style.display='';
+    div.innerHTML=fn(m);
+    area.appendChild(div);
+  });
+}
+
+// ─── SLIDE 1 — COVER ─────────────────────────────────────────
+function buildSlide1(m){
+  const sc=signalColor(m.fmcg_signal);
+  const sg=signalGlow(m.fmcg_signal);
+  return `
+  <div class="cover-hero">
+    <div class="cover-glow"></div>
+    <div class="cover-glow-2"></div>
+    <div class="anim d1">
+      <div class="cover-region-badge">
+        ◈ ${m.region} &nbsp;·&nbsp; Retailer Intelligence 2025
+      </div>
+    </div>
+    <div class="cover-market-name anim d2">${m.name}</div>
+    <div class="anim d3" style="margin-bottom:8px">
+      <div class="signal ${signalClass(m.fmcg_signal)}" style="font-size:18px;padding:8px 22px;box-shadow:0 0 28px ${sg}">
+        <div class="signal-dot"></div>
+        ${m.fmcg_signal}
+        <div class="signal-dot"></div>
+      </div>
+    </div>
+    <div class="cover-divider anim d3"></div>
+    <div class="cover-kpi-row anim d4">
+      <div class="cover-kpi">
+        <div class="cover-kpi-lbl">Population</div>
+        <div class="cover-kpi-val" data-countup="${m.population_m}" data-decimals="1" data-prefix="" data-suffix="M">${fmtPop(m.population_m)}</div>
+      </div>
+      <div class="cover-kpi">
+        <div class="cover-kpi-lbl">GDP Growth 2025</div>
+        <div class="cover-kpi-val" style="color:${m.gdp_growth>=0?'var(--emerald)':'var(--rose)'}">${fmtPct(m.gdp_growth)}</div>
+      </div>
+      <div class="cover-kpi">
+        <div class="cover-kpi-lbl">Inflation 2025</div>
+        <div class="cover-kpi-val" style="color:${inflationColor(m.inflation)}">${fmtPctPlain(m.inflation)}</div>
+      </div>
+      ${m.gdp_pc_ppp!=null?`<div class="cover-kpi">
+        <div class="cover-kpi-lbl">GDP per Capita PPP</div>
+        <div class="cover-kpi-val" style="font-size:1.3rem">$${m.gdp_pc_ppp.toLocaleString('en-US')}</div>
+      </div>`:''}
+    </div>
+    ${m.retailer_insight?`
+    <div class="anim d5" style="margin-top:22px;border-left:2px solid ${sc};padding:10px 16px;background:rgba(255,255,255,0.03);border-radius:0 10px 10px 0;max-width:680px">
+      <span style="font-size:13px;color:var(--text-2);line-height:1.6;font-style:italic">✦ ${m.retailer_insight}</span>
+    </div>`:''}
+    <div class="cover-foot anim d6">Market Intelligence Hub &middot; Retailer Intelligence &middot; 2025</div>
+  </div>`;
+}
+
+// ─── SLIDE 2 — MACRO SNAPSHOT ─────────────────────────────────
+function buildSlide2(m){
+  const hist=m.historical||{};
+  const gdpHist=hist.gdp_growth||{};
+  const infHist=hist.inflation||{};
+  const gdpYears=['2018','2019','2020','2021','2022','2023','2024','2025'];
+  const gdpVals=gdpYears.map(y=>gdpHist[y]??null);
+  const infVals=gdpYears.map(y=>infHist[y]??null);
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Macro Snapshot</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Key Economic Indicators 2025</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g2 anim d2" style="margin-bottom:16px">
+      <!-- LEFT: big KPIs -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card card-sm ${signalCardClass(m.fmcg_signal)}" style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div class="card-label">GDP Growth 2025</div>
+            <div class="kpi-hero" style="font-size:clamp(2rem,5vw,4rem);color:${m.gdp_growth>=0?'var(--emerald)':'var(--rose)'}">
+              <span data-countup="${Math.abs(m.gdp_growth)}" data-decimals="1" data-prefix="${m.gdp_growth>=0?'+':'-'}" data-suffix="%">${fmtPct(m.gdp_growth)}</span>
+            </div>
+            <div class="card-sub">Annual % change &middot; IMF WEO 2025</div>
+          </div>
+          <div style="font-size:3rem;opacity:0.15">${m.gdp_growth>=0?'▲':'▼'}</div>
+        </div>
+        <div class="card card-sm">
+          <div class="card-label">Inflation Rate 2025</div>
+          <div class="kpi-hero" style="font-size:clamp(2rem,5vw,4rem);color:${inflationColor(m.inflation)}">
+            <span data-countup="${m.inflation}" data-decimals="1" data-prefix="" data-suffix="%">${fmtPctPlain(m.inflation)}</span>
+          </div>
+          <div class="card-sub">${m.inflation>6?'Elevated — margin pressure':m.inflation<2.5?'Low — potential deflation risk':'Contained — within target range'}</div>
+        </div>
+        <div class="g2" style="gap:10px">
+          <div class="card card-sm">
+            <div class="card-label">Unemployment</div>
+            <div style="font-family:'Fira Code',monospace;font-size:1.6rem;font-weight:700;color:${m.unemployment_pct>10?'var(--rose)':m.unemployment_pct<4?'var(--emerald)':'var(--text-1)'}">${fmtPctPlain(m.unemployment_pct)}</div>
+            <div class="card-sub">ILO 2025</div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-label">Current Account</div>
+            <div style="font-family:'Fira Code',monospace;font-size:1.6rem;font-weight:700;color:${(m.current_account_pct||0)>=0?'var(--emerald)':'var(--rose)'}">
+              ${m.current_account_pct!=null?((m.current_account_pct>=0?'+':'')+m.current_account_pct.toFixed(1)+'%'):'N/A'}
+            </div>
+            <div class="card-sub">% of GDP</div>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT: sparklines -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="chart-card" style="flex:1">
+          <div class="chart-title">GDP Growth Trend 2018–2025 <span class="tag tag-amber" style="font-size:9px">⚡ COVID 2020</span></div>
+          <div class="chart-wrap"><canvas id="chart-gdp"></canvas></div>
+        </div>
+        <div class="chart-card" style="flex:1">
+          <div class="chart-title">Inflation Trend 2018–2025</div>
+          <div class="chart-wrap"><canvas id="chart-inflation"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="insight anim d3">
+      <span class="insight-icon">◈</span>
+      <span>${macroInsight(m)}</span>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 3 — CONSUMER POWER ─────────────────────────────────
+function buildSlide3(m){
+  const regionAvgPPP=regionAvg(m.region,'gdp_pc_ppp');
+  const regionAvgUnemp=regionAvg(m.region,'unemployment_pct');
+  const maxPPP=Math.max(m.gdp_pc_ppp||0,regionAvgPPP||0)*1.15||1;
+  const mktPct=m.gdp_pc_ppp?Math.min(m.gdp_pc_ppp/maxPPP*100,100).toFixed(1):0;
+  const avgPct=regionAvgPPP?Math.min(regionAvgPPP/maxPPP*100,100).toFixed(1):50;
+  const gaugeRows=[
+    {label:'Urbanization',val:m.urbanization_pct,color:'var(--blue)',suffix:'%'},
+    {label:'E-Commerce Penetration',val:m.ecommerce_pct,color:'var(--cyan)',suffix:'%'},
+    {label:'Internet Penetration',val:m.internet_pct,color:'var(--emerald)',suffix:'%'},
+    {label:'Private Consumption % GDP',val:m.private_consumption_pct,color:'var(--amber)',suffix:'%'},
+  ];
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Consumer Purchasing Power</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Spending Capacity & Labour Market</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g2">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        ${m.big_mac_usd!=null?`
+        <div class="anim d2">
+          <div class="price-tag">
+            <div>
+              <div class="price-tag-lbl">Big Mac Price · USD</div>
+              <div class="price-tag-val">$${m.big_mac_usd.toFixed(2)}</div>
+            </div>
+            <div style="font-size:2.5rem">🍔</div>
+          </div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:6px;margin-left:4px">The Economist · January 2025</div>
+        </div>`:`
+        <div class="card card-sm anim d2">
+          <div class="card-label">Big Mac Index</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:6px">No McDonald's presence in ${m.name}</div>
+        </div>`}
+        <div class="card anim d3">
+          <div class="card-label">GDP per Capita PPP vs ${m.region} Avg</div>
+          <div style="margin-top:12px">
+            <div class="bar-compare">
+              <div class="bar-compare-hdr">
+                <span class="bar-compare-lbl">${m.name}</span>
+                <span class="bar-compare-val">${m.gdp_pc_ppp!=null?'$'+m.gdp_pc_ppp.toLocaleString():'N/A'}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" data-width="${mktPct}" style="background:${regionColor(m.region)};width:0%"></div>
+                <div class="bar-avg" style="left:${avgPct}%" data-label="${m.region} avg $${Math.round(regionAvgPPP||0).toLocaleString()}"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="g2" style="gap:10px">
+          <div class="card card-sm anim d4">
+            <div class="card-label">Unemployment</div>
+            <div style="font-family:'Fira Code',monospace;font-size:1.8rem;font-weight:700;color:${m.unemployment_pct>10?'var(--rose)':m.unemployment_pct<4?'var(--emerald)':'var(--amber)'}">
+              ${fmtPctPlain(m.unemployment_pct)}
+            </div>
+            <div class="card-sub">${m.region} avg: ${regionAvgUnemp?regionAvgUnemp.toFixed(1)+'%':'N/A'}</div>
+          </div>
+          <div class="card card-sm anim d4">
+            <div class="card-label">Median Age</div>
+            <div style="font-family:'Fira Code',monospace;font-size:1.8rem;font-weight:700;color:var(--text-1)">${m.median_age!=null?m.median_age:'N/A'}<span style="font-size:1rem;color:var(--text-3)"> yrs</span></div>
+            <div style="margin-top:6px">${m.median_age!=null?(m.median_age<28?'<span class="tag tag-emerald">Young Market</span>':m.median_age<=40?'<span class="tag tag-amber">Transitional</span>':'<span class="tag tag-rose">Aging</span>'):'N/A'}</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="anim d3" style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px">Digital & Consumer Indicators</div>
+          ${gaugeRows.map((r,i)=>r.val!=null?`
+          <div class="gauge-row">
+            <div class="gauge-label-text">${r.label}</div>
+            <div class="gauge-track">
+              <div class="gauge-fill" data-width="${Math.min(r.val,100).toFixed(1)}" style="background:${r.color};width:0%"></div>
+            </div>
+            <div class="gauge-val" style="color:${r.color}">${r.val.toFixed(1)}${r.suffix}</div>
+          </div>`:'').join('')}
+        </div>
+        <div class="card card-sm anim d5">
+          <div class="card-label">Gini Coefficient</div>
+          <div style="font-family:'Fira Code',monospace;font-size:1.8rem;font-weight:700;color:var(--text-1)">${m.gini!=null?m.gini.toFixed(1):'N/A'}</div>
+          <div style="margin-top:6px">${m.gini!=null?(m.gini<32?'<span class="tag tag-emerald">Low Inequality</span>':m.gini<=45?'<span class="tag tag-amber">Moderate</span>':'<span class="tag tag-rose">High Inequality</span>'):'N/A'}</div>
+        </div>
+        <div class="insight anim d5">
+          <span class="insight-icon">💡</span>
+          <span>${consumerInsight(m)}</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 4 — DIGITAL & E-COMMERCE ───────────────────────────
+function buildSlide4(m){
+  const ecom=m.ecommerce_pct||0;
+  const{label:digLabel,cls:digCls}=ecommerceLabel(ecom);
+  const gaugeColor=ecom>30?'var(--blue)':ecom>15?'var(--emerald)':ecom>5?'var(--amber)':'var(--rose)';
+  const fillDeg=Math.min(ecom/100*180,180);
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Digital & E-Commerce</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Online Retail Penetration & External Balance</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g2">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card anim d2" style="text-align:center;padding:28px 20px">
+          <div style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:16px">E-Commerce Penetration</div>
+          <div style="position:relative;width:160px;height:90px;overflow:hidden;margin:0 auto 12px">
+            <div style="width:160px;height:160px;border-radius:50%;background:conic-gradient(${gaugeColor} 0deg,${gaugeColor} ${fillDeg}deg,rgba(255,255,255,0.06) ${fillDeg}deg,rgba(255,255,255,0.06) 180deg,transparent 180deg);position:absolute;top:0;left:0"></div>
+            <div style="width:120px;height:120px;border-radius:50%;background:var(--bg-2);position:absolute;top:20px;left:20px"></div>
+            <div style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-family:'Fira Code',monospace;font-size:1.5rem;font-weight:700;color:${gaugeColor};white-space:nowrap">${fmtPctPlain(ecom)}</div>
+          </div>
+          <div class="tag ${digCls}">${digLabel}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:8px">% of total retail · 2024–2025</div>
+        </div>
+        <div class="card card-sm anim d3">
+          <div class="card-label">E-Commerce Context</div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-top:6px">
+            ${ecom>30?`${m.name} is a digital-first retail market. Over a third of retail occurs online — omnichannel capability is table stakes.`
+              :ecom>15?`Digital retail is growing rapidly in ${m.name}. Investing in e-commerce capability now positions for future leadership.`
+              :ecom>5?`${m.name} is in digital transition. Physical retail dominates but online channels are gaining share.`
+              :`Physical retail overwhelmingly dominates in ${m.name}. Early-stage digital — first-mover advantage available.`}
+          </div>
+        </div>
+        <div class="card card-sm anim d4">
+          <div class="card-label">FMCG Pricing Proxy</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+            <div style="font-size:2rem">🥤</div>
+            <div>
+              <div style="font-family:'Fira Code',monospace;font-size:1.6rem;font-weight:700">${m.coke_price_usd!=null?'$'+m.coke_price_usd.toFixed(2):'N/A'}</div>
+              <div style="font-size:10px;color:var(--text-3)">Coca-Cola 2L · pricing proxy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card anim d2">
+          <div class="card-label">Current Account Balance</div>
+          <div style="font-family:'Fira Code',monospace;font-size:clamp(2rem,4vw,3.5rem);font-weight:700;line-height:1;color:${(m.current_account_pct||0)>=0?'var(--emerald)':'var(--rose)'}">
+            ${m.current_account_pct!=null?((m.current_account_pct>=0?'+':'')+m.current_account_pct.toFixed(2)+'%'):'N/A'}
+          </div>
+          <div class="card-sub">% of GDP &middot; IMF 2024</div>
+        </div>
+        <div class="insight anim d3">
+          <span class="insight-icon">🌍</span>
+          <span>${caInsight(m)}</span>
+        </div>
+        <div class="card anim d4">
+          <div class="card-label">Digital Infrastructure Signals</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+            ${[
+              {label:'Internet Penetration',val:m.internet_pct,max:100,color:'var(--blue)'},
+              {label:'Urbanization',val:m.urbanization_pct,max:100,color:'var(--cyan)'},
+              {label:'Mobile Subscriptions / 100',val:m.mobile_per_100,max:160,color:'var(--emerald)'},
+            ].map(r=>r.val!=null?`
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <span style="font-size:11px;color:var(--text-2)">${r.label}</span>
+                <span style="font-family:'Fira Code',monospace;font-size:11px;font-weight:700;color:${r.color}">${r.val.toFixed(1)}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" data-width="${Math.min(r.val/r.max*100,100).toFixed(1)}" style="background:${r.color};width:0%"></div>
+              </div>
+            </div>`:'').join('')}
+          </div>
+        </div>
+        <div class="card card-sm anim d5">
+          <div class="card-label">Currency vs USD (Big Mac)</div>
+          <div style="margin-top:8px">
+            ${m.big_mac_index_vs_us==null
+              ?'<span class="tag tag-blue">N/A (no McDonald\'s)</span>'
+              :Math.abs(m.big_mac_index_vs_us)<=3
+                ?'<span class="tag tag-blue">At Parity</span>'
+                :m.big_mac_index_vs_us<0
+                  ?`<span class="tag tag-emerald">${m.big_mac_index_vs_us.toFixed(1)}% Undervalued</span>`
+                  :`<span class="tag tag-rose">+${m.big_mac_index_vs_us.toFixed(1)}% Overvalued</span>`
+            }
+          </div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:6px">The Economist · 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 5 — FMCG SIGNAL ────────────────────────────────────
+function buildSlide5(m){
+  const sig=m.fmcg_signal;
+  const sc=signalColor(sig);
+  const sg=signalGlow(sig);
+  const methodology='Growing = real GDP >3% + inflation <6% + stable demand. Stable = GDP 1–3%, contained inflation. Pressured = low/negative GDP or elevated inflation. Volatile = high inflation, currency instability, or sharp GDP swings.';
+  return `
+  <div class="slide-inner" style="display:flex;flex-direction:column;justify-content:center;min-height:100%">
+    <div class="slide-title anim d1">FMCG Market Signal</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Composite Market Classification</div>
+    <div class="slide-rule anim d1"></div>
+    <div style="text-align:center;padding:32px 0 24px;anim" class="anim d2">
+      <div class="signal signal-xl ${signalClass(sig)}" style="display:inline-flex;box-shadow:0 0 60px ${sg},0 0 120px ${sg};margin-bottom:16px">
+        <div class="signal-dot"></div>
+        ${sig}
+        <div class="signal-dot"></div>
+      </div>
+      <div style="font-size:13px;color:var(--text-3)">FMCG Market Classification &middot; ${m.name} &middot; 2025</div>
+    </div>
+    <div class="g4 anim d3">
+      <div class="card card-sm" style="text-align:center">
+        <div class="card-label">GDP Growth</div>
+        <div style="font-family:'Fira Code',monospace;font-size:1.8rem;font-weight:700;color:${m.gdp_growth>3?'var(--emerald)':m.gdp_growth>0?'var(--amber)':'var(--rose)'}">${fmtPct(m.gdp_growth)}</div>
+        <div class="card-sub">Target &gt;3% for Growing</div>
+      </div>
+      <div class="card card-sm" style="text-align:center">
+        <div class="card-label">Inflation</div>
+        <div style="font-family:'Fira Code',monospace;font-size:1.8rem;font-weight:700;color:${inflationColor(m.inflation)}">${fmtPctPlain(m.inflation)}</div>
+        <div class="card-sub">Target &lt;6% for Growing</div>
+      </div>
+      <div class="card card-sm" style="text-align:center">
+        <div class="card-label">Unemployment</div>
+        <div style="font-family:'Fira Code',monospace;font-size:1.8rem;font-weight:700;color:${m.unemployment_pct>10?'var(--rose)':'var(--text-1)'}">${fmtPctPlain(m.unemployment_pct)}</div>
+        <div class="card-sub">Labour market health</div>
+      </div>
+      <div class="card card-sm" style="text-align:center">
+        <div class="card-label">GDP per Capita PPP</div>
+        <div style="font-family:'Fira Code',monospace;font-size:1.5rem;font-weight:700;color:var(--text-1)">$${m.gdp_pc_ppp!=null?m.gdp_pc_ppp.toLocaleString():'N/A'}</div>
+        <div class="card-sub">Spending power proxy</div>
+      </div>
+    </div>
+    <div class="insight anim d4" style="margin-top:16px;background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.1)">
+      <span class="insight-icon">ℹ</span>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Signal Methodology</div>
+        <span style="font-size:12px">${methodology}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 6 — GDP TRAJECTORY ─────────────────────────────────
+function buildSlide6(m){
+  const hist=m.historical?.gdp_growth||{};
+  const v18=hist['2018'],v25=hist['2025'];
+  const delta=(v25!=null&&v18!=null)?(v25-v18):null;
+  const tag=gdpTrendTag(hist);
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">GDP Growth Trajectory · 2018–2025</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Annual % Change (IMF WEO)</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g-25" style="align-items:start">
+      <div style="display:flex;flex-direction:column;gap:6px" class="anim d2">
+        ${['2018','2019','2020','2021','2022','2023','2024','2025'].map(yr=>`
+        <div class="card card-sm" style="padding:8px 12px;${yr==='2020'?'border-color:rgba(245,158,11,0.35);':''};display:flex;justify-content:space-between;align-items:center">
+          <div class="card-label" style="margin:0">${yr}${yr==='2020'?' ⚡':''}</div>
+          <div style="font-family:'Fira Code',monospace;font-size:14px;font-weight:700;color:${(hist[yr]||0)>=0?'var(--emerald)':'var(--rose)'}">${hist[yr]!=null?fmtPct(hist[yr]):'—'}</div>
+        </div>`).join('')}
+        ${delta!=null?`
+        <div style="padding:8px 12px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);border-radius:10px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase">Δ 2018→2025</span>
+          <span style="font-family:'Fira Code',monospace;font-size:14px;font-weight:700;color:${delta>=0?'var(--emerald)':'var(--rose)'}">${delta>=0?'+':''}${delta.toFixed(1)}pp</span>
+        </div>`:''}
+        <div class="tag ${tag.cls}">${tag.label}</div>
+      </div>
+      <div class="chart-card anim d3">
+        <div class="chart-title">GDP Growth Rate (%) · 2018–2025 <span class="tag tag-amber" style="font-size:9px">⚡ 2020 COVID-19</span></div>
+        <div style="position:relative;height:280px"><canvas id="chart-gdp-hist"></canvas></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 7 — INFLATION TRAJECTORY ───────────────────────────
+function buildSlide7(m){
+  const hist=m.historical?.inflation||{};
+  const v18=hist['2018'],v25=hist['2025'];
+  const infDelta=(v25!=null&&v18!=null)?(v25-v18):null;
+  const tag=inflationTrendTag(hist);
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Inflation Trajectory · 2018–2025</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Average Consumer Prices Annual % (IMF)</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g-25" style="align-items:start">
+      <div style="display:flex;flex-direction:column;gap:6px" class="anim d2">
+        ${['2018','2019','2020','2021','2022','2023','2024','2025'].map(yr=>`
+        <div class="card card-sm" style="padding:8px 12px;${yr==='2020'?'border-color:rgba(245,158,11,0.35);':''};display:flex;justify-content:space-between;align-items:center">
+          <div class="card-label" style="margin:0">${yr}${yr==='2020'?' ⚡':''}</div>
+          <div style="font-family:'Fira Code',monospace;font-size:14px;font-weight:700;color:${inflationColor(hist[yr])}">${hist[yr]!=null?fmtPctPlain(hist[yr]):'—'}</div>
+        </div>`).join('')}
+        ${infDelta!=null?`
+        <div style="padding:8px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase">Δ 2018→2025</span>
+          <span style="font-family:'Fira Code',monospace;font-size:14px;font-weight:700;color:${infDelta>=0?'var(--rose)':'var(--emerald)'}">${infDelta>=0?'+':''}${infDelta.toFixed(1)}pp</span>
+        </div>`:''}
+        <div class="tag ${tag.cls}">${tag.label}</div>
+        <div class="insight" style="padding:10px 12px">
+          <span style="font-size:12px">${v25!=null&&v25<=3?'Inflation is normalizing — consumer budgets stabilizing.':v25!=null&&v25<=8?'Inflation elevated — affordability a key challenge.':v25!=null?'Critical level — real purchasing power severely eroded.':'Insufficient data.'}</span>
+        </div>
+      </div>
+      <div class="chart-card anim d3">
+        <div class="chart-title">Inflation Rate (%) · 2018–2025 <span class="tag tag-amber" style="font-size:9px">⚡ 2020 COVID-19</span></div>
+        <div style="position:relative;height:280px"><canvas id="chart-infl-hist"></canvas></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 8 — REGIONAL BENCHMARK ─────────────────────────────
+function buildSlide8(m){
+  const fields=[
+    {key:'gdp_growth',label:'GDP Growth',fmt:v=>v!=null?v.toFixed(1)+'%':'N/A'},
+    {key:'inflation',label:'Inflation Rate',fmt:v=>v!=null?v.toFixed(1)+'%':'N/A'},
+    {key:'gdp_pc_ppp',label:'GDP per Capita PPP',fmt:v=>v!=null?'$'+v.toLocaleString():'N/A'},
+    {key:'ecommerce_pct',label:'E-Commerce %',fmt:v=>v!=null?v.toFixed(1)+'%':'N/A'},
+    {key:'unemployment_pct',label:'Unemployment',fmt:v=>v!=null?v.toFixed(1)+'%':'N/A'},
+    {key:'median_age',label:'Median Age',fmt:v=>v!=null?v.toFixed(1)+' yrs':'N/A'},
+    {key:'internet_pct',label:'Internet Penetration',fmt:v=>v!=null?v.toFixed(1)+'%':'N/A'},
+    {key:'private_consumption_pct',label:'Private Consumption % GDP',fmt:v=>v!=null?v.toFixed(1)+'%':'N/A'},
+  ];
+  const avgs={};
+  fields.forEach(f=>{avgs[f.key]=regionAvg(m.region,f.key);});
+  const renderField=f=>{
+    const mktVal=m[f.key];const avgVal=avgs[f.key];
+    const maxVal=Math.max(Math.abs(mktVal||0),Math.abs(avgVal||0))*1.3||1;
+    const mktPct=mktVal!=null?Math.min(Math.abs(mktVal)/maxVal*100,100).toFixed(1):0;
+    const avgPct=avgVal!=null?Math.min(Math.abs(avgVal)/maxVal*100,100).toFixed(1):50;
+    return`<div class="bar-compare" style="margin-bottom:16px">
+      <div class="bar-compare-hdr">
+        <span class="bar-compare-lbl" style="font-size:12px;font-weight:600;color:var(--text-1)">${f.label}</span>
+        <span class="bar-compare-val" style="font-size:12px">${f.fmt(mktVal)}</span>
+      </div>
+      <div class="bar-track" style="height:10px">
+        <div class="bar-fill" data-width="${mktPct}" style="background:${regionColor(m.region)};width:0%"></div>
+        <div class="bar-avg" style="left:${avgPct}%;top:-3px;height:16px" data-label="${m.region} avg ${f.fmt(avgVal)}"></div>
+      </div>
+    </div>`;
+  };
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Regional Context — vs ${m.region} Average</div>
+    <div class="slide-subtitle anim d1">${m.name} benchmarked against all ${m.region} markets in dataset</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g2">
+      <div class="card anim d2">${fields.slice(0,4).map(renderField).join('')}</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card anim d3">${fields.slice(4).map(renderField).join('')}</div>
+        <div class="card card-sm anim d4" style="border-color:${regionColor(m.region)}44;box-shadow:0 0 20px ${regionColor(m.region)}18">
+          <div class="card-label">Region</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:${regionColor(m.region)}">${m.region}</div>
+          <div class="card-sub">${getRegionMarkets(m.region).length} markets in dataset</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 9 — AI ANALYST ─────────────────────────────────────
+function buildSlide9(m){
+  const hasKey=()=>{const cfg=window.MIH_CONFIG?.[currentProvider];return cfg&&cfg.apiKey&&cfg.apiKey!=='YOUR_GROK_API_KEY_HERE'&&cfg.apiKey.trim()!=='';};
+  const cached=aiGeneratedText[m.id];
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">AI Analyst · Market Intelligence</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Strategic Retail Analysis</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="provider-pill-row anim d2">
+      <span style="font-size:11px;color:var(--text-3);font-weight:500">Provider:</span>
+      <div class="provider-pill ${currentProvider==='grok'?'active':''}" onclick="switchProvider('grok');goToSlide(8,'left')">Grok · x.ai</div>
+      <div class="provider-pill ${currentProvider==='openai'?'active':''}" onclick="switchProvider('openai');goToSlide(8,'left')">GPT-5 · OpenAI</div>
+    </div>
+    <div class="ai-terminal anim d3">
+      <div class="ai-terminal-header">
+        <div class="ai-term-dot" style="background:#FF5F57"></div>
+        <div class="ai-term-dot" style="background:#FFBD2E"></div>
+        <div class="ai-term-dot" style="background:#28CA41"></div>
+        <div class="ai-term-text">MIH.AI // ${currentProvider.toUpperCase()} // ${m.name.toUpperCase()}</div>
+      </div>
+      <div id="ai-content">
+        ${cached
+          ?`<div class="ai-output" id="ai-output-text">${cached}</div>`
+          :`<div class="ai-placeholder-msg">
+              <span style="color:rgba(16,185,129,0.5)">$</span> awaiting_prompt --market="${m.name}" --provider=${currentProvider}<span class="ai-cursor"></span>
+            </div>`
+        }
+      </div>
+      <div class="ai-actions-row" id="ai-actions">
+        ${!hasKey()?`
+          <div class="ai-no-key-msg">⚠ No API key configured. Click ⚙ Settings to add your ${currentProvider==='grok'?'Grok':'GPT-5'} API key.</div>
+        `:`
+          <button class="ai-action-btn" id="ai-generate-btn" onclick="handleAIGenerate()">▶ ${cached?'Regenerate':'Generate Insights'}</button>
+          ${cached?`<button class="ai-action-btn ai-action-btn-ghost" onclick="handleAIClear()">⌫ Clear</button>`:''}`}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 10 — SUMMARY ───────────────────────────────────────
+function buildSlide10(m){
+  const opp=m.gdp_growth>3.5&&m.inflation<5;
+  const risks=[];
+  if(m.inflation>15)risks.push(`Inflation at ${fmtPctPlain(m.inflation)} is critically elevated`);
+  if(m.unemployment_pct>15)risks.push(`Unemployment at ${fmtPctPlain(m.unemployment_pct)} signals weak consumer confidence`);
+  if(m.fmcg_signal==='Volatile')risks.push('FMCG signal is Volatile — demand patterns are unpredictable');
+  if(m.govt_debt_pct!=null&&m.govt_debt_pct>100)risks.push(`High govt debt (${m.govt_debt_pct.toFixed(1)}% GDP)`);
+  const risk=risks.length>0;
+  const watchField=m.inflation>8?`Inflation at ${fmtPctPlain(m.inflation)} needs to normalize before FMCG premiumization is viable.`
+    :m.unemployment_pct>10?`Unemployment at ${fmtPctPlain(m.unemployment_pct)} signals weak labour market — discretionary spend at risk.`
+    :m.ecommerce_pct<5?`E-commerce penetration at ${fmtPctPlain(m.ecommerce_pct)} is early-stage — digital investment timing is critical.`
+    :m.current_account_pct!=null&&m.current_account_pct<-4?`Current account deficit of ${fmtPctPlain(Math.abs(m.current_account_pct))} GDP — FX volatility risk for import-dependent categories.`
+    :`GDP growth trajectory from 2018 to 2025 should be monitored for sustained momentum.`;
+  const takeaway=opp&&!risk?`${m.name} presents a strong market opportunity: GDP growth is outperforming and inflation is contained, creating favorable conditions for FMCG investment and portfolio expansion.`
+    :risk?`${m.name} requires a cautious approach — macro headwinds including ${risks[0]||'elevated risks'} make robust scenario planning essential before major commitments.`
+    :`${m.name} offers a stable foundation for FMCG retail engagement, with moderate growth and manageable risks. Focus on value positioning and digital channel development.`;
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Summary · Investment Signals</div>
+    <div class="slide-subtitle anim d1">${m.name} &middot; Strategic Recommendations for Retail Leadership</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="g3 anim d2">
+      <div class="rec-card" style="border-color:${opp?'rgba(16,185,129,0.35)':'rgba(255,255,255,0.1)'}">
+        <div class="rec-badge rec-badge-opp">Opportunity</div>
+        <div class="rec-title">${opp?'Favorable Entry Conditions':'Limited Opportunity Window'}</div>
+        <div class="rec-body">
+          ${opp?`GDP growth of <strong style="color:var(--emerald)">${fmtPct(m.gdp_growth)}</strong> combined with manageable inflation of <strong style="color:var(--emerald)">${fmtPctPlain(m.inflation)}</strong> creates a strong window for market investment and portfolio expansion.`
+          :`Current GDP growth of <strong>${fmtPct(m.gdp_growth)}</strong> and inflation of <strong>${fmtPctPlain(m.inflation)}</strong> limit near-term expansion opportunity. Monitor for improvement in macro fundamentals.`}
+        </div>
+      </div>
+      <div class="rec-card" style="border-color:${risk?'rgba(239,68,68,0.35)':'rgba(255,255,255,0.1)'}">
+        <div class="rec-badge rec-badge-risk">Risk</div>
+        <div class="rec-title">${risk?'Elevated Macro Risk':'Manageable Risk Profile'}</div>
+        <div class="rec-body">
+          ${risk?`Key risks:<ul style="margin:6px 0 0 16px;padding:0">${risks.map(r=>`<li style="margin-bottom:4px">${r}</li>`).join('')}</ul>`
+          :`Risk profile is contained. FMCG signal is <strong style="color:var(--blue)">${m.fmcg_signal}</strong>. Inflation and employment indicators are within acceptable bounds.`}
+        </div>
+      </div>
+      <div class="rec-card" style="border-color:rgba(245,158,11,0.25)">
+        <div class="rec-badge rec-badge-watch">Watch</div>
+        <div class="rec-title">Key Monitoring Indicator</div>
+        <div class="rec-body">${watchField}</div>
+      </div>
+    </div>
+    <div class="takeaway anim d3">
+      <div class="takeaway-lbl">◈ Key Takeaway</div>
+      <div class="takeaway-text">${takeaway}</div>
+    </div>
+    <div class="context-strip anim d4">
+      <span style="font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px">Context</span>
+      <div class="context-sep"></div>
+      <span class="context-item">Govt Debt: <strong>${m.govt_debt_pct!=null?m.govt_debt_pct.toFixed(1)+'% GDP':'N/A'}</strong></span>
+      <div class="context-sep"></div>
+      <span class="context-item">Trade Openness: <strong>${m.trade_openness_pct!=null?m.trade_openness_pct.toFixed(1)+'%':'N/A'}</strong></span>
+      <div class="context-sep"></div>
+      <span class="context-item">FDI: <strong>${m.fdi_pct!=null?m.fdi_pct.toFixed(2)+'% GDP':'N/A'}</strong></span>
+      <div class="context-sep"></div>
+      <span class="context-item">Mobile/100: <strong>${m.mobile_per_100!=null?m.mobile_per_100.toFixed(0):'N/A'}</strong></span>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 11 — VARIABLE CORRELATION EXPLORER ─────────────────
+function buildSlide11(m){
+  // Render shell; chart injected by renderCorrelationChart() on slide enter
+  const markets=window.MIH_DATA.markets;
+  const otherMarkets=markets.filter(mk=>mk.id!==m.id);
+  const optionsList=otherMarkets.map(mk=>`<option value="${mk.id}">${mk.flag?mk.flag+' ':''} ${mk.name}</option>`).join('');
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Variable Correlation Explorer</div>
+    <div class="slide-subtitle anim d1">Trace how two macro variables co-evolved over time &middot; ${m.name}</div>
+    <div class="slide-rule anim d1"></div>
+    <!-- Controls -->
+    <div class="corr-controls anim d2">
+      <span class="corr-label">X Axis</span>
+      <div class="corr-select-wrap">
+        <select class="corr-select" id="corr-x-var" onchange="renderCorrelationChart()">
+          <optgroup label="─ Time Series (2018-2025)">
+            <option value="gdp_growth">GDP Growth %</option>
+            <option value="inflation">Inflation %</option>
+          </optgroup>
+          <optgroup label="─ Current Year (Cross-Market)">
+            <option value="gdp_pc_ppp">GDP per Capita PPP</option>
+            <option value="unemployment_pct">Unemployment %</option>
+            <option value="ecommerce_pct">E-commerce %</option>
+            <option value="urbanization_pct">Urbanization %</option>
+            <option value="internet_pct">Internet %</option>
+            <option value="mobile_per_100">Mobile per 100</option>
+            <option value="gini">Gini Coefficient</option>
+            <option value="trade_openness_pct">Trade Openness %</option>
+            <option value="fdi_pct">FDI %</option>
+            <option value="private_consumption_pct">Private Consumption %</option>
+            <option value="govt_debt_pct">Govt Debt %</option>
+            <option value="median_age">Median Age</option>
+            <option value="current_account_pct">Current Account %</option>
+          </optgroup>
+        </select>
+      </div>
+      <span class="corr-label">Y Axis</span>
+      <div class="corr-select-wrap">
+        <select class="corr-select" id="corr-y-var" onchange="renderCorrelationChart()">
+          <optgroup label="─ Time Series (2018-2025)">
+            <option value="inflation">Inflation %</option>
+            <option value="gdp_growth">GDP Growth %</option>
+          </optgroup>
+          <optgroup label="─ Current Year (Cross-Market)">
+            <option value="gdp_pc_ppp">GDP per Capita PPP</option>
+            <option value="unemployment_pct">Unemployment %</option>
+            <option value="ecommerce_pct">E-commerce %</option>
+            <option value="urbanization_pct">Urbanization %</option>
+            <option value="internet_pct">Internet %</option>
+            <option value="mobile_per_100">Mobile per 100</option>
+            <option value="gini">Gini Coefficient</option>
+            <option value="trade_openness_pct">Trade Openness %</option>
+            <option value="fdi_pct">FDI %</option>
+            <option value="private_consumption_pct">Private Consumption %</option>
+            <option value="govt_debt_pct">Govt Debt %</option>
+            <option value="median_age">Median Age</option>
+            <option value="current_account_pct">Current Account %</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="corr-sep"></div>
+      <div class="corr-check-wrap">
+        <input type="checkbox" class="corr-checkbox" id="corr-compare-toggle" onchange="toggleCorrCompare()">
+        <span class="corr-label">Compare Market</span>
+      </div>
+      <div class="corr-select-wrap" id="corr-compare-wrap" style="display:none">
+        <select class="corr-select" id="corr-compare-market" onchange="renderCorrelationChart()">
+          ${optionsList}
+        </select>
+      </div>
+    </div>
+    <!-- Chart subtitle -->
+    <div id="corr-subtitle" style="font-family:'Inter',sans-serif;font-size:11px;color:#94A3B8;margin-bottom:6px;text-align:center;min-height:16px;"></div>
+    <!-- Chart -->
+    <div class="corr-chart-wrap anim d3">
+      <canvas id="chart-correlation"></canvas>
+    </div>
+    <!-- Pearson r bar -->
+    <div class="corr-bar-section anim d4" id="corr-bar-section">
+      <div class="corr-bar-label">Pearson Correlation Coefficient</div>
+      <div class="corr-r-display">
+        <div class="corr-r-value" id="corr-r-value">r = —</div>
+        <div class="corr-r-interp" id="corr-r-interp">Select variables above</div>
+      </div>
+      <div class="corr-track">
+        <div class="corr-pointer" id="corr-pointer" style="left:50%"></div>
+      </div>
+      <div class="corr-track-labels">
+        <span class="corr-track-lbl">−1</span>
+        <span class="corr-track-lbl">−0.5</span>
+        <span class="corr-track-lbl">0</span>
+        <span class="corr-track-lbl">+0.5</span>
+        <span class="corr-track-lbl">+1</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SLIDE 12 — METHODOLOGY & LEARNING CORNER ─────────────────
+function buildSlide12(m){
+  const steps=[
+    'Select a market from the country selector in the header to load all 12 slides for that market.',
+    'Navigate slides with Arrow keys (←→) on keyboard, or click the dot indicators on the right edge.',
+    'Review macro signals in <strong style="color:var(--text-1)">Slide 1 — Cover</strong>: the FMCG signal badge shows the overall market health classification.',
+    'Deep-dive financial KPIs in <strong style="color:var(--text-1)">Slides 2–4</strong>: macro snapshot, consumer purchasing power, and digital & e-commerce.',
+    'Check the composite FMCG Signal classification in <strong style="color:var(--text-1)">Slide 5</strong> and historical trajectories in Slides 6–7.',
+    'Use <strong style="color:var(--text-1)">Slide 11 — Correlation Explorer</strong> to trace how GDP and inflation co-evolved for any market.',
+    'Use <strong style="color:var(--text-1)">AI Analyst (Slide 9)</strong> for strategic narrative insights. Requires Grok or GPT-5 API key via ⚙ Settings.',
+    'Export to <strong style="color:var(--text-1)">PDF or PNG</strong> using the header buttons for use in presentations and reports.',
+  ];
+  const kpis=[
+    {name:'GDP Growth %',def:'Annual real GDP expansion. Source: IMF WEO. Higher = stronger economy.'},
+    {name:'Inflation %',def:'Annual CPI change. Source: IMF. 2–3% = healthy; >6% = pressured consumers.'},
+    {name:'Unemployment %',def:'% of labor force unemployed. Source: ILO. Lower = better.'},
+    {name:'GDP per Capita PPP',def:'Purchasing power parity income per person. Source: IMF/World Bank. Higher = richer.'},
+    {name:'Urbanization %',def:'% of population in cities. Source: UN WUP. Higher = more formal retail.'},
+    {name:'E-Commerce %',def:'% of retail sales online. Source: Euromonitor. Higher = digital shift.'},
+    {name:'Gini Coefficient',def:'Income inequality 0–100. Source: World Bank. Lower = more equal.'},
+    {name:'Internet %',def:'% population with internet access. Source: ITU. Proxy for digital consumer reach.'},
+    {name:'Big Mac Index',def:'Implied PPP gauge vs US dollar. Source: The Economist.'},
+    {name:'Trade Openness',def:'(Exports+Imports)/GDP. Source: World Bank. Higher = more globalized.'},
+    {name:'FMCG Signal',def:'Composite: Growing / Stable / Pressured / Volatile. Internal MIH assessment.'},
+  ];
+  return `
+  <div class="slide-inner">
+    <div class="slide-title anim d1">Methodology &amp; Learning Corner</div>
+    <div class="slide-subtitle anim d1">How to use this report &middot; KPI definitions &middot; Data sources</div>
+    <div class="slide-rule anim d1"></div>
+    <div class="guide-two-col anim d2">
+      <!-- Left: how to use -->
+      <div class="guide-card">
+        <div class="guide-card-title">◈ How to Use This Report</div>
+        ${steps.map((s,i)=>`
+        <div class="guide-step">
+          <div class="guide-step-num">${i+1}</div>
+          <div class="guide-step-text">${s}</div>
+        </div>`).join('')}
+      </div>
+      <!-- Right: KPI definitions -->
+      <div class="guide-card">
+        <div class="guide-card-title">◈ KPI Definitions</div>
+        <div class="kpi-list">
+          ${kpis.map(k=>`
+          <div class="kpi-def"><strong>${k.name}</strong> — ${k.def}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <!-- Sources -->
+    <div class="guide-sources anim d3">
+      <div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Data Vintage &amp; Sources</div>
+      <div style="font-size:12px;color:var(--text-2);margin-bottom:8px">IMF WEO October 2025 + January 2026 update</div>
+      <div class="guide-sources-row">
+        ${['IMF','World Bank WDI','UN WPP/WUP 2024/2025','ILO ILOSTAT','The Economist Big Mac Index','ITU','GSMA','Euromonitor'].map(s=>`<span class="guide-src-item">${s}</span>`).join('')}
+      </div>
+      <div class="guide-disclaimer">For internal strategic use only — Market Intelligence Hub &middot; Not for external client distribution without methodology documentation.</div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CHART RENDERING (COVID plugin adapted for dark theme)
+// ═══════════════════════════════════════════════════════════════
+const covidLinePlugin={
+  id:'covidLine',
+  afterDraw(chart){
+    const idx=chart.data.labels?.indexOf('2020');
+    if(idx==null||idx<0)return;
+    const meta=chart.getDatasetMeta(0);
+    if(!meta||!meta.data[idx])return;
+    const x=meta.data[idx].x;
+    const ctx2=chart.ctx;
+    const{top,bottom}=chart.chartArea;
+    ctx2.save();
+    ctx2.beginPath();
+    ctx2.setLineDash([4,3]);
+    ctx2.strokeStyle='rgba(245,158,11,0.45)';
+    ctx2.lineWidth=1.5;
+    ctx2.moveTo(x,top);ctx2.lineTo(x,bottom);
+    ctx2.stroke();
+    ctx2.setLineDash([]);
+    ctx2.font='9px Fira Code, monospace';
+    ctx2.fillStyle='rgba(245,158,11,0.7)';
+    ctx2.textAlign='center';
+    ctx2.fillText('COVID-19',x,top-4);
+    ctx2.restore();
+  }
+};
+
+function triggerCharts(idx){
+  if(idx===1){renderMacroSparklines();}
+  if(idx===5){renderGDPChart();}
+  if(idx===6){renderInflationChart();}
+  if(idx===10){renderCorrelationChart();}
+}
+
+function renderMacroSparklines(){
+  const m=currentMarket;
+  const gdpHist=m.historical?.gdp_growth||{};
+  const infHist=m.historical?.inflation||{};
+  const labels=['2018','2019','2020','2021','2022','2023','2024','2025'];
+  const gdpData=labels.map(y=>gdpHist[y]??null);
+  const infData=labels.map(y=>infHist[y]??null);
+  const darkOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw?.toFixed(1)+'%'}},covidLine:{}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{font:{family:'Fira Code',size:10},color:'#475569'}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{font:{family:'Fira Code',size:10},color:'#475569',callback:v=>v+'%'},beginAtZero:false}},animation:{duration:800,easing:'easeInOutQuart'}};
+  destroyChart('macro-gdp');destroyChart('macro-inf');
+  const gEl=document.getElementById('chart-gdp');
+  if(gEl){
+    charts['macro-gdp']=new Chart(gEl,{type:'line',data:{labels,datasets:[{label:'GDP Growth %',data:gdpData,borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,0.06)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#3B82F6',pointBorderColor:'#0D1729',pointBorderWidth:2,tension:0.4,fill:true,spanGaps:true}]},options:darkOpts,plugins:[covidLinePlugin]});
+  }
+  const iEl=document.getElementById('chart-inflation');
+  if(iEl){
+    charts['macro-inf']=new Chart(iEl,{type:'line',data:{labels,datasets:[{label:'Inflation %',data:infData,borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,0.06)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#EF4444',pointBorderColor:'#0D1729',pointBorderWidth:2,tension:0.4,fill:true,spanGaps:true}]},options:darkOpts,plugins:[covidLinePlugin]});
+  }
+}
+
+function renderGDPChart(){
+  const m=currentMarket;
+  const hist=m.historical?.gdp_growth||{};
+  const labels=['2018','2019','2020','2021','2022','2023','2024','2025'];
+  const data=labels.map(y=>hist[y]??null);
+  destroyChart('gdp');
+  const ctx=document.getElementById('chart-gdp-hist');
+  if(!ctx)return;
+  charts['gdp']=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{label:'GDP Growth %',data,borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,0.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#3B82F6',pointBorderColor:'#0D1729',pointBorderWidth:2,tension:0.35,fill:true,spanGaps:true}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw?.toFixed(1)+'%'}},covidLine:{}},scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{family:'Fira Code',size:11},color:'#475569'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{family:'Fira Code',size:11},color:'#475569',callback:v=>v+'%'},beginAtZero:false}},animation:{duration:900,easing:'easeInOutQuart'}},
+    plugins:[covidLinePlugin]
+  });
+}
+
+function renderInflationChart(){
+  const m=currentMarket;
+  const hist=m.historical?.inflation||{};
+  const labels=['2018','2019','2020','2021','2022','2023','2024','2025'];
+  const data=labels.map(y=>hist[y]??null);
+  destroyChart('inflation');
+  const ctx=document.getElementById('chart-infl-hist');
+  if(!ctx)return;
+  charts['inflation']=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{label:'Inflation %',data,borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,0.07)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#EF4444',pointBorderColor:'#0D1729',pointBorderWidth:2,tension:0.35,fill:true,spanGaps:true}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw?.toFixed(1)+'%'}},covidLine:{}},scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{family:'Fira Code',size:11},color:'#475569'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{family:'Fira Code',size:11},color:'#475569',callback:v=>v+'%'},beginAtZero:false}},animation:{duration:900,easing:'easeInOutQuart'}},
+    plugins:[covidLinePlugin]
+  });
+}
+
+// ─── CORRELATION EXPLORER HELPERS ─────────────────────────────
+function pearsonR(xs,ys){
+  const n=xs.length;
+  if(n<2)return null;
+  const sx=xs.reduce((a,b)=>a+b,0);
+  const sy=ys.reduce((a,b)=>a+b,0);
+  const sxy=xs.reduce((a,x,i)=>a+x*ys[i],0);
+  const sx2=xs.reduce((a,x)=>a+x*x,0);
+  const sy2=ys.reduce((a,y)=>a+y*y,0);
+  const denom=Math.sqrt((n*sx2-sx*sx)*(n*sy2-sy*sy));
+  if(denom===0)return null;
+  return(n*sxy-sx*sy)/denom;
+}
+function corrInterpret(r){
+  if(r===null)return'Insufficient data';
+  const abs=Math.abs(r);
+  const dir=r>=0?'positive':'negative';
+  if(abs>=0.9)return`Very strong ${dir} correlation`;
+  if(abs>=0.7)return`Strong ${dir} correlation`;
+  if(abs>=0.5)return`Moderate ${dir} correlation`;
+  if(abs>=0.3)return`Weak ${dir} correlation`;
+  return'Negligible correlation';
+}
+function getHistPairs(m,xVar,yVar){
+  const YEARS=['2018','2019','2020','2021','2022','2023','2024','2025'];
+  const xHist=m.historical?.[xVar]||{};
+  const yHist=m.historical?.[yVar]||{};
+  const xs=[],ys=[],years=[];
+  YEARS.forEach(yr=>{
+    if(xHist[yr]!=null&&yHist[yr]!=null){xs.push(xHist[yr]);ys.push(yHist[yr]);years.push(yr);}
+  });
+  return{xs,ys,years};
+}
+function corrPointColors(years){
+  // gradient from #475569 (2018) to #06B6D4 (2025)
+  const YEAR_COLORS={
+    '2018':'#475569','2019':'#526070','2020':'#F59E0B',
+    '2021':'#2D8B9E','2022':'#1AA0B8','2023':'#0FB5CD','2024':'#08BACF','2025':'#06B6D4'
+  };
+  return years.map(y=>YEAR_COLORS[y]||'#06B6D4');
+}
+function corrPointRadii(years){
+  return years.map(y=>y==='2020'?10:6);
+}
+
+function toggleCorrCompare(){
+  const on=document.getElementById('corr-compare-toggle').checked;
+  document.getElementById('corr-compare-wrap').style.display=on?'':'none';
+  renderCorrelationChart();
+}
+
+const HIST_KPIS_SET=new Set(['gdp_growth','inflation']);
+const REGION_COLORS_CORR={'Americas':'#0891B2','LATAM':'#7C3AED','WE':'#059669','EEMEA':'#D97706','APAC':'#1A56DB'};
+
+function renderCorrelationChart(){
+  const m=currentMarket;
+  const xEl=document.getElementById('corr-x-var');
+  const yEl=document.getElementById('corr-y-var');
+  if(!xEl||!yEl)return;
+  const xVar=xEl.value;
+  const yVar=yEl.value;
+  const xLabel=xEl.options[xEl.selectedIndex].text;
+  const yLabel=yEl.options[yEl.selectedIndex].text;
+
+  destroyChart('correlation');
+  const ctx=document.getElementById('chart-correlation');
+  if(!ctx)return;
+
+  const bothHistorical=HIST_KPIS_SET.has(xVar)&&HIST_KPIS_SET.has(yVar);
+
+  if(bothHistorical){
+    // ── TRAJECTORY MODE: year-by-year for selected market ──
+    const{xs,ys,years}=getHistPairs(m,xVar,yVar);
+    const YEAR_COLORS={'2018':'#475569','2019':'#526070','2020':'#F59E0B','2021':'#2D8B9E','2022':'#1AA0B8','2023':'#0FB5CD','2024':'#08BACF','2025':'#06B6D4'};
+    const colors=years.map(y=>YEAR_COLORS[y]||'#06B6D4');
+    const radii=years.map(y=>y==='2020'?13:7);
+    const mainData=xs.map((x,i)=>({x,y:ys[i],year:years[i]}));
+    const r=pearsonR(xs,ys);
+
+    // Compare market overlay
+    const compareOn=document.getElementById('corr-compare-toggle')?.checked;
+    const datasets=[{
+      label:m.name+' (each dot = 1 year)',
+      data:mainData,
+      backgroundColor:colors,
+      borderColor:years.map(y=>y==='2020'?'#92400E':'rgba(6,182,212,0.6)'),
+      borderWidth:years.map(y=>y==='2020'?2:1),
+      pointRadius:radii,
+      showLine:false,
+      pointHoverRadius:12,
+    }];
+    if(compareOn){
+      const cmpId=document.getElementById('corr-compare-market')?.value;
+      const cmpM=window.MIH_DATA.markets.find(mk=>mk.id===cmpId);
+      if(cmpM){
+        const{xs:cx,ys:cy,years:cyr}=getHistPairs(cmpM,xVar,yVar);
+        datasets.push({
+          label:cmpM.name+' (each dot = 1 year)',
+          data:cx.map((x,i)=>({x,y:cy[i],year:cyr[i]})),
+          backgroundColor:cyr.map(y=>y==='2020'?'#F59E0B':'rgba(16,185,129,0.75)'),
+          borderColor:'rgba(16,185,129,0.5)',
+          borderWidth:1,
+          pointRadius:cyr.map(y=>y==='2020'?13:7),
+          showLine:false,
+          pointHoverRadius:12,
+        });
+      }
+    }
+
+    const yearLabelPlugin={
+      id:'yearLabel',
+      afterDatasetsDraw(chart){
+        const c2=chart.ctx;
+        chart.data.datasets.forEach((ds,di)=>{
+          const meta=chart.getDatasetMeta(di);
+          ds.data.forEach((pt,i)=>{
+            if(!pt.year)return;
+            const el=meta.data[i];
+            if(!el)return;
+            const{x,y}=el.getCenterPoint();
+            c2.save();
+            c2.font=pt.year==='2020'?'bold 9px Fira Code,monospace':'8px Fira Code,monospace';
+            c2.fillStyle=pt.year==='2020'?'#F59E0B':'rgba(148,163,184,0.9)';
+            c2.textAlign='center';
+            c2.fillText(pt.year,x,y-10);
+            c2.restore();
+          });
+        });
+      }
+    };
+
+    _buildCorrChart(ctx,datasets,xLabel,yLabel,r,yearLabelPlugin);
+
+  }else{
+    // ── CROSS-MARKET MODE: all 47 markets, current values ──
+    const markets=window.MIH_DATA.markets;
+    const grouped={};
+    markets.forEach(mk=>{
+      const xv=mk[xVar]; const yv=mk[yVar];
+      if(xv==null||yv==null)return;
+      if(!grouped[mk.region])grouped[mk.region]=[];
+      grouped[mk.region].push({x:xv,y:yv,name:mk.name,pop:mk.population_m||5});
+    });
+    const allXs=[],allYs=[];
+    const datasets=Object.entries(grouped).map(([region,pts])=>{
+      pts.forEach(p=>{allXs.push(p.x);allYs.push(p.y);});
+      return{
+        label:region,
+        data:pts.map(p=>({x:p.x,y:p.y,name:p.name})),
+        backgroundColor:REGION_COLORS_CORR[region]||'#94A3B8',
+        borderColor:'rgba(255,255,255,0.2)',
+        borderWidth:1,
+        pointRadius:pts.map(p=>Math.max(5,Math.min(18,Math.sqrt(p.pop)*1.5))),
+        showLine:false,
+        pointHoverRadius:14,
+      };
+    });
+    // Highlight selected market
+    const selDs={
+      label:m.name+' (selected)',
+      data:(()=>{const xv=m[xVar];const yv=m[yVar];return(xv!=null&&yv!=null)?[{x:xv,y:yv,name:m.name}]:[];})(),
+      backgroundColor:'#F59E0B',borderColor:'#92400E',borderWidth:2,
+      pointRadius:[14],showLine:false,pointHoverRadius:16,
+    };
+    if(selDs.data.length)datasets.push(selDs);
+    const r=pearsonR(allXs,allYs);
+    _buildCorrChart(ctx,datasets,xLabel,yLabel,r,null,true);
+  }
+}
+
+function _buildCorrChart(ctx,datasets,xLabel,yLabel,r,extraPlugin,showLegend=false){
+  const rDisplay=r!==null?'r = '+r.toFixed(3):'r = N/A';
+  const rInterp=corrInterpret(r);
+  const rPct=r!==null?((r+1)/2*100).toFixed(1)+'%':'50%';
+  const plugins=[]; if(extraPlugin)plugins.push(extraPlugin);
+
+  charts['correlation']=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:showLegend,labels:{color:'#94A3B8',font:{family:'Inter',size:10},boxWidth:10}},
+        tooltip:{
+          callbacks:{
+            label:c=>{
+              const pt=c.raw;
+              const name=pt.name||pt.year||'';
+              return`${name}: (${xLabel.replace(' %','')}: ${pt.x?.toFixed(1)}, ${yLabel.replace(' %','')}: ${pt.y?.toFixed(1)})`;
+            }
+          },
+          backgroundColor:'rgba(13,23,41,0.95)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,
+          titleColor:'#94A3B8',bodyColor:'#F1F5F9',
+          titleFont:{family:'Fira Code',size:10},bodyFont:{family:'Inter',size:12}
+        },
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{family:'Fira Code',size:10},color:'#94A3B8'},
+          title:{display:true,text:xLabel,color:'#94A3B8',font:{family:'Space Grotesk',size:12,weight:'600'}}},
+        y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{family:'Fira Code',size:10},color:'#94A3B8'},
+          title:{display:true,text:yLabel,color:'#94A3B8',font:{family:'Space Grotesk',size:12,weight:'600'}},beginAtZero:false}
+      },
+      animation:{duration:700,easing:'easeInOutQuart'}
+    },
+    plugins
+  });
+
+  const rVal=document.getElementById('corr-r-value');
+  const rInt=document.getElementById('corr-r-interp');
+  const rPtr=document.getElementById('corr-pointer');
+  if(rVal)rVal.textContent=rDisplay;
+  if(rInt)rInt.textContent=rInterp;
+  if(rPtr)rPtr.style.left=rPct;
+
+  // sub-title below controls
+  const sub=document.getElementById('corr-subtitle');
+  if(sub){
+    const bothHist=HIST_KPIS_SET.has(document.getElementById('corr-x-var')?.value)&&HIST_KPIS_SET.has(document.getElementById('corr-y-var')?.value);
+    sub.textContent=bothHist
+      ?'Each dot = 1 year (2018–2025) — trajectory for selected market'
+      :'Each dot = 1 market (2025 values) — circle size = population';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOAD MARKET
+// ═══════════════════════════════════════════════════════════════
+function loadMarket(m){
+  currentMarket=m;
+  destroyChart('gdp');destroyChart('inflation');destroyChart('macro-gdp');destroyChart('macro-inf');destroyChart('correlation');
+  buildAllSlides(m);
+  document.getElementById('vintage-chip').textContent=window.MIH_DATA.metadata.vintage||'2025-Q4 / 2026-Q1';
+  currentSlide=0;
+  buildDotsNav();
+  updateDotsNav();
+  triggerSlideAnimations(0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AI ANALYST
+// ═══════════════════════════════════════════════════════════════
+async function runAIAnalysis(market){
+  const provider=currentProvider;
+  const cfg=window.MIH_CONFIG[provider];
+  const prompt=`You are a senior retail analyst writing for FMCG commercial leadership. Analyze this market and write 4-5 sentences of strategic intelligence for retail decision-makers.
+
+Market: ${market.name} (${market.region})
+GDP Growth 2025: ${market.gdp_growth}%
+Inflation 2025: ${market.inflation}%
+Population: ${market.population_m}M
+Urbanization: ${market.urbanization_pct}%
+GDP per capita PPP: $${market.gdp_pc_ppp?market.gdp_pc_ppp.toLocaleString():'N/A'}
+Unemployment: ${market.unemployment_pct}%
+E-commerce penetration: ${market.ecommerce_pct}%
+Big Mac Price: ${market.big_mac_usd?'$'+market.big_mac_usd:'N/A'}
+FMCG Signal: ${market.fmcg_signal}
+Current Account: ${market.current_account_pct}% of GDP
+
+Write a concise 4-5 sentence analysis covering: macro environment assessment, consumer spending power, digital/retail opportunity, and one specific strategic recommendation.`;
+  const response=await fetch(cfg.endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey},body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],max_tokens:400,temperature:0.7})});
+  if(!response.ok){const err=await response.json().catch(()=>({}));throw new Error(err.error?.message||`API error ${response.status}`);}
+  const data=await response.json();
+  return data.choices[0].message.content;
+}
+
+function typewriterEffect(el,text,speed=18){
+  el.textContent='';
+  let i=0;
+  const cursor=document.createElement('span');
+  cursor.className='ai-cursor';
+  el.appendChild(cursor);
+  const id=setInterval(()=>{
+    if(i<text.length){el.insertBefore(document.createTextNode(text[i]),cursor);i++;}
+    else{clearInterval(id);cursor.remove();}
+  },speed);
+}
+
+function handleAIGenerate(){
+  const m=currentMarket;
+  const cfg=window.MIH_CONFIG?.[currentProvider];
+  if(!cfg||!cfg.apiKey||cfg.apiKey==='YOUR_GROK_API_KEY_HERE'||!cfg.apiKey.trim()){alert('Please configure your API key in Settings first.');return;}
+  const contentEl=document.getElementById('ai-content');
+  const actionsEl=document.getElementById('ai-actions');
+  if(!contentEl)return;
+  contentEl.innerHTML=`<div class="ai-spinner-wrap"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span class="ai-spin-text">Generating analysis…</span></div>`;
+  if(actionsEl)actionsEl.style.display='none';
+  runAIAnalysis(m).then(text=>{
+    aiGeneratedText[m.id]=text;
+    contentEl.innerHTML='<div class="ai-output" id="ai-output-text"></div>';
+    typewriterEffect(document.getElementById('ai-output-text'),text);
+    if(actionsEl){
+      actionsEl.style.display='flex';
+      actionsEl.innerHTML=`<button class="ai-action-btn" id="ai-generate-btn" onclick="handleAIGenerate()">▶ Regenerate</button><button class="ai-action-btn ai-action-btn-ghost" onclick="handleAIClear()">⌫ Clear</button>`;
+    }
+  }).catch(err=>{
+    contentEl.innerHTML=`<div class="ai-error">ERROR: ${err.message}</div>`;
+    if(actionsEl){actionsEl.style.display='flex';actionsEl.innerHTML=`<button class="ai-action-btn" onclick="handleAIGenerate()">▶ Retry</button>`;}
+  });
+}
+
+function handleAIClear(){
+  delete aiGeneratedText[currentMarket.id];
+  buildAllSlides(currentMarket);
+  buildDotsNav();
+  currentSlide=8;
+  document.querySelectorAll('.slide').forEach((s,i)=>{s.classList.toggle('active',i===8);});
+  updateDotsNav();
+  triggerSlideAnimations(8);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SETTINGS MODAL
+// ═══════════════════════════════════════════════════════════════
+function openSettings(){
+  document.getElementById('settings-modal').classList.add('open');
+  document.getElementById('grok-key-input').value=window.MIH_CONFIG?.grok?.apiKey||'';
+  document.getElementById('openai-key-input').value=window.MIH_CONFIG?.openai?.apiKey||'';
+  updateSegmentedControl();
+}
+function closeSettings(){document.getElementById('settings-modal').classList.remove('open');}
+function switchProvider(p){currentProvider=p;updateSegmentedControl();}
+function updateSegmentedControl(){
+  document.getElementById('seg-grok').classList.toggle('active',currentProvider==='grok');
+  document.getElementById('seg-openai').classList.toggle('active',currentProvider==='openai');
+  document.getElementById('provider-grok-section').style.display=currentProvider==='grok'?'':'none';
+  document.getElementById('provider-openai-section').style.display=currentProvider==='openai'?'':'none';
+}
+function saveSettings(){
+  if(!window.MIH_CONFIG)window.MIH_CONFIG={};
+  if(!window.MIH_CONFIG.grok)window.MIH_CONFIG.grok={};
+  if(!window.MIH_CONFIG.openai)window.MIH_CONFIG.openai={};
+  window.MIH_CONFIG.grok.apiKey=document.getElementById('grok-key-input').value.trim();
+  window.MIH_CONFIG.openai.apiKey=document.getElementById('openai-key-input').value.trim();
+  window.MIH_CONFIG.defaultProvider=currentProvider;
+  if(!window.MIH_CONFIG.grok.model)window.MIH_CONFIG.grok.model='grok-3';
+  if(!window.MIH_CONFIG.grok.endpoint)window.MIH_CONFIG.grok.endpoint='https://api.x.ai/v1/chat/completions';
+  if(!window.MIH_CONFIG.openai.model)window.MIH_CONFIG.openai.model='gpt-5';
+  if(!window.MIH_CONFIG.openai.endpoint)window.MIH_CONFIG.openai.endpoint='https://api.openai.com/v1/chat/completions';
+  closeSettings();
+  if(currentSlide===8)goToSlide(8,'left');
+}
+document.getElementById('btn-settings').addEventListener('click',openSettings);
+document.getElementById('settings-modal').addEventListener('click',function(e){if(e.target===this)closeSettings();});
+
+// ═══════════════════════════════════════════════════════════════
+// PDF / PNG EXPORT
+// ═══════════════════════════════════════════════════════════════
+function exportOnClone(clonedDoc){
+  const s=clonedDoc.createElement('style');
+  s.textContent=`
+    :root{
+      --glass:rgba(13,23,41,0.92);
+      --glass-hover:rgba(13,23,41,0.95);
+    }
+    *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+    .slide:not(.active){display:none!important}
+    .insight{background:rgba(59,130,246,0.15)!important}
+    #header{background:rgba(8,15,30,0.98)!important}
+    body{background-image:none!important}
+  `;
+  clonedDoc.head.appendChild(s);
+  // Copy canvas pixels from live DOM into clone — active slide only to avoid 0×0 uninitialised canvases
+  const activeClone=clonedDoc.querySelector('.slide.active');
+  if(activeClone){
+    activeClone.querySelectorAll('canvas').forEach(cloneC=>{
+      if(!cloneC.id)return;
+      const origC=document.getElementById(cloneC.id);
+      if(!origC||origC.width===0||origC.height===0){
+        cloneC.width=2;cloneC.height=2;
+        return;
+      }
+      cloneC.width=origC.width;
+      cloneC.height=origC.height;
+      try{cloneC.getContext('2d').drawImage(origC,0,0);}catch(e){}
+    });
+  }
+}
+
+async function exportPDF(market){
+  if(isExporting)return;
+  isExporting=true;
+  const btn=document.getElementById('btn-pdf');
+  btn.classList.add('exporting');btn.textContent='…';
+  try{
+    const{jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    const savedSlide=currentSlide;
+    for(let i=0;i<12;i++){
+      document.querySelectorAll('.slide').forEach((s,idx)=>{s.classList.toggle('active',idx===i);s.style.transform='';s.style.transition='none';});
+      currentSlide=i;
+      triggerSlideAnimations(i);
+      triggerCharts(i);
+      await new Promise(r=>setTimeout(r,1100));
+      const canvas=await html2canvas(document.getElementById('slide-area'),{
+        scale:1.5,useCORS:true,allowTaint:true,
+        backgroundColor:'#080F1E',logging:false,
+        onclone:exportOnClone,
+        ignoreElements:el=>el.classList&&el.classList.contains('slide')&&!el.classList.contains('active')
+      });
+      const img=canvas.toDataURL('image/jpeg',0.92);
+      if(i>0)pdf.addPage();
+      pdf.addImage(img,'JPEG',0,0,297,210);
+    }
+    document.querySelectorAll('.slide').forEach(s=>{s.style.transition='';});
+    const date=new Date().toISOString().slice(0,10);
+    pdf.save(`MIH_RetailerIntelligence_${market.id}_${date}.pdf`);
+    goToSlide(savedSlide,'left');
+  }catch(e){alert('PDF export failed: '+e.message);}
+  finally{isExporting=false;btn.classList.remove('exporting');btn.innerHTML='⇓ PDF';}
+}
+
+async function exportPNG(market){
+  if(isExporting)return;
+  isExporting=true;
+  const btn=document.getElementById('btn-png');
+  btn.classList.add('exporting');btn.textContent='…';
+  try{
+    const canvas=await html2canvas(document.getElementById('slide-area'),{
+      scale:2,useCORS:true,allowTaint:true,
+      backgroundColor:'#080F1E',logging:false,
+      onclone:exportOnClone,
+      ignoreElements:el=>el.classList&&el.classList.contains('slide')&&!el.classList.contains('active')
+    });
+    const link=document.createElement('a');
+    const date=new Date().toISOString().slice(0,10);
+    link.download=`MIH_Slide${currentSlide+1}_${market.id}_${date}.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  }catch(e){alert('PNG export failed: '+e.message);}
+  finally{isExporting=false;btn.classList.remove('exporting');btn.innerHTML='⬡ PNG';}
+}
+
+document.getElementById('btn-pdf').addEventListener('click',()=>exportPDF(currentMarket));
+document.getElementById('btn-png').addEventListener('click',()=>exportPNG(currentMarket));
+
+// ═══════════════════════════════════════════════════════════════
+// KEYBOARD NAV
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(currentSlide<11)goToSlide(currentSlide+1,'right');}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(currentSlide>0)goToSlide(currentSlide-1,'left');}
+  if(e.key==='Escape')closeSettings();
+});
+document.getElementById('btn-prev').addEventListener('click',()=>{if(currentSlide>0)goToSlide(currentSlide-1,'left');});
+document.getElementById('btn-next').addEventListener('click',()=>{if(currentSlide<11)goToSlide(currentSlide+1,'right');});
+document.getElementById('btn-ai').addEventListener('click',()=>goToSlide(8,8>currentSlide?'right':'left'));
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+function init(){
+  if(!window.MIH_DATA){
+    document.getElementById('slide-area').innerHTML='<div style="padding:60px;color:var(--rose);font-family:Fira Code,monospace">ERROR: data.js not loaded. Check ../data/data.js path.</div>';
+    return;
+  }
+  buildMarketSelector();
+  buildDotsNav();
+  updateSegmentedControl();
+  const defaultMarket=window.MIH_DATA.markets[0];
+  document.getElementById('market-select').value=defaultMarket.id;
+  loadMarket(defaultMarket);
+}
+
+init();
+</script>
+</body>
+</html>

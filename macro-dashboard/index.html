@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Intelligence Hub · Global FMCG Macro Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── RESET & ROOT ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F9FC;
+  --surface: #FFFFFF;
+  --surface-2: #EEF3FF;
+  --navy: #0B1E3D;
+  --blue: #1A56DB;
+  --blue-light: #3B82F6;
+  --cyan: #06B6D4;
+  --emerald: #059669; --emerald-bg: #DCFCE7;
+  --amber: #D97706; --amber-bg: #FEF3C7;
+  --rose: #E11D48; --rose-bg: #FFE4E6;
+  --violet: #7C3AED; --violet-bg: #EDE9FE;
+  --text-1: #0F172A; --text-2: #475569; --text-3: #94A3B8;
+  --border: #E2E8F0; --border-strong: #CBD5E1;
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+  --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
+  --shadow-lg: 0 10px 40px rgba(15,23,42,0.12);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-1); font-size: 14px; line-height: 1.5; }
+
+.mono { font-family: 'Fira Code', monospace; }
+.display { font-family: 'Space Grotesk', sans-serif; }
+
+/* ── NAV ── */
+#navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.nav-inner {
+  max-width: 1440px; margin: 0 auto;
+  padding: 0 32px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; }
+.nav-logo {
+  width: 36px; height: 36px;
+  background: var(--navy);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 700; color: #fff;
+  letter-spacing: 0.5px;
+}
+.nav-title-block { display: flex; flex-direction: column; gap: 1px; }
+.nav-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy); }
+.nav-subtitle { font-size: 11px; color: var(--text-3); letter-spacing: 0.2px; }
+.nav-right { display: flex; align-items: center; gap: 24px; }
+.nav-links { display: flex; gap: 4px; }
+.nav-link {
+  padding: 6px 14px; border-radius: 6px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--text-2); text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-link:hover { background: var(--surface-2); color: var(--blue); }
+.vintage-chip {
+  background: var(--surface-2);
+  border: 1px solid #BFDBFE;
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px; font-weight: 500;
+  color: var(--blue);
+}
+
+/* ── HERO ── */
+#hero {
+  background: linear-gradient(135deg, #F7F9FC 0%, #EEF3FF 100%);
+  padding: 64px 32px 56px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-inner { max-width: 1440px; margin: 0 auto; }
+.hero-text { margin-bottom: 40px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 99px; padding: 4px 12px; margin-bottom: 16px;
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 48px; font-weight: 700; color: var(--navy);
+  line-height: 1.1; margin-bottom: 12px;
+}
+.hero-subtitle { font-size: 16px; color: var(--text-2); font-weight: 400; }
+
+/* ── FIVE FORCES KPI CARDS ── */
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.force-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-md);
+  min-height: 180px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: box-shadow 0.15s;
+}
+.force-card:hover { box-shadow: var(--shadow-lg); }
+.force-card.emerald { border-left: 4px solid var(--emerald); }
+.force-card.rose    { border-left: 4px solid var(--rose); }
+.force-card.blue    { border-left: 4px solid var(--blue); }
+.force-card.cyan    { border-left: 4px solid var(--cyan); }
+.force-card.violet  { border-left: 4px solid var(--violet); }
+.force-icon { font-size: 18px; line-height: 1; margin-bottom: 2px; }
+.force-label {
+  font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px;
+}
+.force-value {
+  font-family: 'Fira Code', monospace; font-size: 22px; font-weight: 700;
+  color: var(--navy); line-height: 1.1;
+}
+.force-insight {
+  font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-2);
+  margin-top: auto; line-height: 1.4;
+}
+
+/* ── SECTION WRAPPER ── */
+.section-wrap { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+
+/* ── INTELLIGENCE SECTION ── */
+#intelligence { padding: 56px 32px; }
+.intel-header { max-width: 1440px; margin: 0 auto 32px; display: flex; align-items: center; justify-content: space-between; }
+.section-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--navy); }
+.bento-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.panel-header {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); }
+.panel-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.panel-body { padding: 20px 24px; }
+.charts-col { display: flex; flex-direction: column; gap: 20px; }
+.chart-wrap { position: relative; }
+.chart-wrap canvas { display: block; }
+
+/* Signal Distribution */
+.donut-wrap { position: relative; height: 200px; margin-bottom: 20px; }
+.signal-cards { display: flex; flex-direction: column; gap: 8px; }
+.signal-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+}
+.signal-card-left { display: flex; align-items: center; gap: 10px; }
+.signal-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.signal-name { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-1); }
+.signal-markets { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.signal-count { font-family: 'Fira Code', monospace; font-size: 18px; font-weight: 700; }
+
+/* ── HEATMAP SECTION ── */
+#heatmap { padding: 56px 32px; background: var(--bg); }
+.heatmap-header { max-width: 1440px; margin: 0 auto 24px; }
+.heatmap-table-wrap {
+  max-width: 1440px; margin: 0 auto;
+  overflow: auto; max-height: 600px;
+  border-radius: 14px; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+.heatmap-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+.heatmap-table thead { background: var(--navy); position: sticky; top: 0; z-index: 20; }
+.heatmap-table thead th {
+  padding: 11px 10px; text-align: center;
+  font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.heatmap-table thead th:first-child { text-align: left; position: sticky; left: 0; background: var(--navy); z-index: 30; }
+.heatmap-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; cursor: pointer; }
+.heatmap-table tbody tr:hover { filter: brightness(0.94); }
+.heatmap-table td {
+  padding: 8px 10px; font-family: 'Fira Code', monospace; font-size: 11px;
+  text-align: center; white-space: nowrap;
+}
+.heatmap-table td.mkt-name {
+  text-align: left; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--text-1); white-space: nowrap;
+  position: sticky; left: 0; background: inherit; z-index: 5;
+  min-width: 120px; padding-left: 14px;
+}
+.heatmap-table tr.region-sep td {
+  background: var(--surface-2); color: var(--text-3);
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.6px; border: none; padding: 6px 14px;
+  cursor: default;
+}
+.heatmap-table tr.region-sep:hover { filter: none; }
+
+/* ── MARKET MODAL ── */
+.market-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(11,30,61,0.45); backdrop-filter: blur(3px);
+  align-items: center; justify-content: center;
+}
+.market-modal-overlay.open { display: flex; }
+.market-modal {
+  background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-lg);
+  width: 560px; max-width: 95vw; max-height: 88vh; overflow-y: auto;
+  padding: 28px 32px; position: relative;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; color: var(--text-3); line-height: 1;
+}
+.modal-close:hover { color: var(--text-1); }
+.modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.modal-subtitle { font-size: 12px; color: var(--text-3); margin-bottom: 20px; }
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.modal-stat { background: var(--bg); border-radius: 8px; padding: 10px 14px; }
+.modal-stat-label { font-size: 10px; color: var(--text-3); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 3px; }
+.modal-stat-value { font-family: 'Fira Code', monospace; font-size: 15px; font-weight: 700; color: var(--text-1); }
+.modal-insight {
+  background: var(--surface-2); border-left: 3px solid var(--blue);
+  border-radius: 0 8px 8px 0; padding: 12px 16px;
+  font-size: 13px; color: var(--text-2); font-style: italic; line-height: 1.5;
+}
+.modal-insight-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+
+/* ── MARKETS TABLE SECTION ── */
+#markets { padding: 0 32px 56px; }
+.markets-header { max-width: 1440px; margin: 0 auto 20px; display: flex; align-items: center; gap: 12px; }
+.count-badge {
+  background: var(--surface-2);
+  color: var(--blue);
+  border: 1px solid #BFDBFE;
+  border-radius: 99px;
+  padding: 2px 10px;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px; font-weight: 600;
+}
+.filter-row {
+  max-width: 1440px; margin: 0 auto 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.filter-group { display: flex; gap: 6px; align-items: center; }
+.filter-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; }
+.pill-btn {
+  padding: 5px 14px; border-radius: 99px; border: 1px solid var(--border);
+  background: var(--surface); cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--text-2); transition: all 0.15s; white-space: nowrap;
+}
+.pill-btn:hover { border-color: var(--blue-light); color: var(--blue); background: var(--surface-2); }
+.pill-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+.pill-btn.active-apac { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pill-btn.active-americas { background: var(--amber); border-color: var(--amber); color: #fff; }
+.pill-btn.active-latam { background: #B45309; border-color: #B45309; color: #fff; }
+.pill-btn.active-we { background: var(--violet); border-color: var(--violet); color: #fff; }
+.pill-btn.active-eemea { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+.filter-divider { width: 1px; height: 28px; background: var(--border); }
+
+select.filter-select {
+  padding: 5px 28px 5px 12px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--text-2); appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394A3B8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+select.filter-select:focus { outline: none; border-color: var(--blue-light); }
+
+.search-input {
+  padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); font-family: 'Inter', sans-serif; font-size: 13px;
+  color: var(--text-1); width: 200px; transition: border-color 0.15s;
+}
+.search-input:focus { outline: none; border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.search-input::placeholder { color: var(--text-3); }
+
+.sort-chip {
+  margin-left: auto;
+  padding: 4px 12px; border-radius: 99px;
+  background: var(--surface-2); border: 1px solid #BFDBFE;
+  font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 500; color: var(--blue);
+}
+
+.table-wrap { max-width: 1440px; margin: 0 auto; overflow-x: auto; border-radius: 14px; box-shadow: var(--shadow-md); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--navy); position: sticky; top: 60px; z-index: 10; }
+thead th {
+  padding: 13px 14px; text-align: left;
+  font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px;
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: color 0.15s;
+}
+thead th:hover { color: #fff; }
+thead th.sorted { color: #fff; }
+thead th .sort-arr { margin-left: 4px; opacity: 0.4; font-size: 10px; }
+thead th.sorted .sort-arr { opacity: 1; color: var(--cyan); }
+thead th.num { text-align: right; }
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface-2); }
+tbody tr.fade-in { animation: rowFadeIn 0.3s ease forwards; opacity: 0; }
+@keyframes rowFadeIn { to { opacity: 1; } }
+td { padding: 12px 14px; font-size: 13px; color: var(--text-1); white-space: nowrap; }
+td.num { text-align: right; font-family: 'Fira Code', monospace; font-size: 12px; }
+td.na { text-align: right; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-3); }
+td.pos { color: var(--emerald); font-family: 'Fira Code', monospace; font-size: 12px; text-align: right; }
+td.neg { color: var(--rose); font-family: 'Fira Code', monospace; font-size: 12px; text-align: right; }
+td .market-name { font-weight: 500; }
+td .market-id { font-family: 'Fira Code', monospace; font-size: 10px; color: var(--text-3); margin-top: 1px; }
+td.retailer-insight-cell {
+  max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+  font-size: 11px; color: var(--text-2); font-style: italic; white-space: nowrap;
+}
+
+/* ── SIGNAL PILL ── */
+.signal-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.signal-pill.Growing { background: var(--emerald-bg); color: var(--emerald); }
+.signal-pill.Stable { background: #DBEAFE; color: var(--blue); }
+.signal-pill.Pressured { background: var(--amber-bg); color: var(--amber); }
+.signal-pill.Volatile { background: var(--rose-bg); color: var(--rose); }
+.pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+.Growing .pulse-dot { background: var(--emerald); }
+.Volatile .pulse-dot { background: var(--rose); }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.6; }
+}
+
+/* ── REGION PILL ── */
+.region-pill {
+  display: inline-block;
+  padding: 2px 9px; border-radius: 99px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.region-pill.APAC { background: #DBEAFE; color: var(--blue); }
+.region-pill.Americas { background: var(--amber-bg); color: var(--amber); }
+.region-pill.LATAM { background: #FEF9C3; color: #B45309; }
+.region-pill.WE { background: var(--violet-bg); color: var(--violet); }
+.region-pill.EEMEA { background: var(--emerald-bg); color: var(--emerald); }
+
+/* ── METHODOLOGY SECTION ── */
+#methodology { padding: 56px 32px; background: var(--surface); border-top: 1px solid var(--border); }
+.meth-inner { max-width: 1440px; margin: 0 auto; }
+.meth-header { margin-bottom: 32px; }
+.accordion { display: flex; flex-direction: column; gap: 8px; }
+.accordion-item { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.accordion-trigger {
+  width: 100%; background: var(--surface); border: none; cursor: pointer;
+  padding: 18px 24px; display: flex; align-items: center; justify-content: space-between;
+  text-align: left; transition: background 0.15s;
+}
+.accordion-trigger:hover { background: var(--surface-2); }
+.accordion-trigger-text { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--navy); }
+.accordion-chevron { font-size: 13px; color: var(--text-3); transition: transform 0.25s; flex-shrink: 0; }
+.accordion-trigger.open .accordion-chevron { transform: rotate(180deg); }
+.accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+.accordion-body.open { max-height: 1200px; }
+.accordion-content { padding: 0 24px 24px; color: var(--text-2); font-size: 14px; line-height: 1.7; }
+.accordion-content p { margin-bottom: 12px; }
+.accordion-content p:last-child { margin-bottom: 0; }
+.meth-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+.meth-table th { background: var(--bg); padding: 9px 14px; text-align: left; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-3); border-bottom: 1px solid var(--border); }
+.meth-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; }
+.meth-table tr:last-child td { border-bottom: none; }
+.meth-table tr:hover td { background: var(--bg); }
+.signal-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+.signal-legend-item { padding: 14px; border-radius: 10px; border: 1px solid var(--border); }
+.signal-legend-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.signal-legend-desc { font-size: 12px; color: var(--text-2); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy); color: rgba(255,255,255,0.6);
+  padding: 24px 32px; font-size: 12px;
+}
+.footer-inner {
+  max-width: 1440px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.footer-copy { font-family: 'Space Grotesk', sans-serif; font-size: 12px; }
+.footer-internal { font-family: 'Fira Code', monospace; font-size: 11px; color: rgba(255,255,255,0.35); }
+
+/* ── NO RESULTS ── */
+.no-results { padding: 48px; text-align: center; color: var(--text-3); font-family: 'Space Grotesk', sans-serif; font-size: 14px; }
+
+/* ── CHART TOOLTIPS ── */
+.chart-legend-row { display: flex; gap: 16px; flex-wrap: wrap; padding: 8px 24px 4px; }
+.chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-2); font-family: 'Space Grotesk', sans-serif; font-weight: 500; }
+.chart-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── REFERENCE LINES NOTE ── */
+.chart-note { padding: 4px 24px 16px; font-size: 11px; color: var(--text-3); font-style: italic; }
+
+/* ── GUIDE TAB BUTTON ── */
+.guide-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--text-2); background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.guide-btn:hover { background: var(--surface-2); color: var(--blue); }
+.guide-btn.active { background: var(--navy); color: #fff; }
+
+/* ── GUIDE SECTION ── */
+#guide-section {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 48px 48px 64px;
+}
+.guide-back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 16px; cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--text-2); margin-bottom: 36px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.guide-back-btn:hover { background: var(--surface-2); color: var(--blue); border-color: #BFDBFE; }
+.guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.guide-col {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.guide-col::-webkit-scrollbar { width: 4px; }
+.guide-col::-webkit-scrollbar-track { background: var(--border); border-radius: 99px; }
+.guide-col::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+.guide-col-heading {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem; font-weight: 700; color: var(--navy);
+  margin-bottom: 20px;
+}
+/* Step cards — glassmorphism-lite */
+.guide-step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.guide-step-num {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%; background: var(--surface-2);
+  border: 1px solid #BFDBFE;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 700;
+  color: var(--blue);
+}
+.guide-step-body { flex: 1; }
+.guide-step-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--navy); margin-bottom: 3px;
+}
+.guide-step-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+/* KPI definition cards */
+.guide-kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.guide-kpi-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.guide-kpi-name {
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--navy);
+}
+.guide-kpi-unit {
+  font-family: 'Fira Code', monospace; font-size: 10px; font-weight: 600;
+  background: var(--surface-2); border: 1px solid #BFDBFE;
+  color: var(--blue); border-radius: 99px; padding: 1px 8px;
+}
+.guide-kpi-def { font-size: 11px; color: var(--text-2); line-height: 1.5; margin-bottom: 5px; }
+.guide-kpi-source {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'Fira Code', monospace; font-size: 10px; color: var(--text-3);
+}
+/* Methodology column */
+.guide-vintage-card {
+  background: var(--navy); color: #fff;
+  border-radius: 10px; padding: 16px 20px;
+  margin-bottom: 16px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;
+}
+.guide-sources-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.guide-source-chip {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 99px; padding: 4px 12px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 500;
+  color: var(--text-2);
+}
+.guide-coverage-card {
+  background: var(--surface-2); border: 1px solid #BFDBFE;
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 13px; color: var(--navy); margin-bottom: 16px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.guide-meth-label {
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--navy); text-transform: uppercase; letter-spacing: 0.4px;
+  margin-bottom: 8px; margin-top: 16px;
+}
+.guide-meth-text {
+  font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px;
+}
+.guide-disclaimer {
+  border: 1px solid var(--amber);
+  background: var(--amber-bg);
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 12px; color: #92400E; line-height: 1.6;
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-logo">MIH</div>
+      <div class="nav-title-block">
+        <div class="nav-title">Market Intelligence Hub</div>
+        <div class="nav-subtitle">Global FMCG Intelligence · 2025</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#hero" class="nav-link">Overview</a>
+        <a href="#intelligence" class="nav-link">Intelligence</a>
+        <a href="#heatmap" class="nav-link">Heatmap</a>
+        <a href="#methodology" class="nav-link">Methodology</a>
+        <button id="guideTab" class="guide-btn" onclick="toggleGuide()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Guide
+        </button>
+      </div>
+      <span class="vintage-chip">IMF WEO Oct 2025 · 47 Markets</span>
+    </div>
+  </div>
+</nav>
+
+<div id="main-dashboard">
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Live Intelligence · Updated 2025-Q4
+      </div>
+      <h1 class="hero-title">Global FMCG<br>Macro Intelligence</h1>
+      <p class="hero-subtitle">47 Markets · 5 Regions · 11 Indicators · Updated 2025</p>
+    </div>
+    <!-- Five Forces KPI Cards -->
+    <div class="kpi-row" id="forcesRow">
+      <div class="force-card emerald">
+        <div class="force-icon">&#x26A1;</div>
+        <div class="force-label">Growth Engine</div>
+        <div class="force-value mono" id="force-growth-val">—</div>
+        <div class="force-insight" id="force-growth-insight">Loading…</div>
+      </div>
+      <div class="force-card rose">
+        <div class="force-icon">&#x1F525;</div>
+        <div class="force-label">Inflation Pressure</div>
+        <div class="force-value mono" id="force-inflation-val">—</div>
+        <div class="force-insight" id="force-inflation-insight">Loading…</div>
+      </div>
+      <div class="force-card blue">
+        <div class="force-icon">&#x1F4B0;</div>
+        <div class="force-label">Wealth Tier</div>
+        <div class="force-value mono" id="force-wealth-val">—</div>
+        <div class="force-insight" id="force-wealth-insight">Loading…</div>
+      </div>
+      <div class="force-card cyan">
+        <div class="force-icon">&#x1F4F1;</div>
+        <div class="force-label">Digital Leap</div>
+        <div class="force-value mono" id="force-digital-val">—</div>
+        <div class="force-insight" id="force-digital-insight">Loading…</div>
+      </div>
+      <div class="force-card violet">
+        <div class="force-icon">&#x1F465;</div>
+        <div class="force-label">Demographics</div>
+        <div class="force-value mono" id="force-demo-val">—</div>
+        <div class="force-insight" id="force-demo-insight">Loading…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INTELLIGENCE ── -->
+<section id="intelligence">
+  <div class="intel-header">
+    <div>
+      <div class="section-title">Market Intelligence</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px;">GDP Growth, Inflation & Signal Distribution across all markets</div>
+    </div>
+  </div>
+  <div class="bento-grid">
+    <!-- Charts Column -->
+    <div class="charts-col">
+      <!-- GDP Bar Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">GDP Growth by Market · 2025</div>
+            <div class="panel-sub">Sorted descending · Color = FMCG Signal</div>
+          </div>
+          <div class="chart-legend-row" style="padding:0;flex-wrap:wrap;gap:12px;">
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#059669"></span>Growing</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#1A56DB"></span>Stable</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#D97706"></span>Pressured</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#E11D48"></span>Volatile</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-wrap" style="height:480px;">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Scatter Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">GDP Growth vs Inflation · 2025</div>
+            <div class="panel-sub">Bubble size = Population · Color = Region</div>
+          </div>
+          <div class="chart-legend-row" style="padding:0;flex-wrap:wrap;gap:12px;">
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#D97706"></span>Americas</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#F59E0B"></span>LATAM</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#7C3AED"></span>WE</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#059669"></span>EEMEA</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#1A56DB"></span>APAC</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-wrap" style="height:340px;">
+            <canvas id="scatterChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-note">Dashed lines: x=0 (zero growth threshold) · y=6 (elevated inflation threshold)</div>
+      </div>
+      <!-- NEW: Gini vs GDP Scatter -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Inequality vs Wealth · Gini Coefficient by Market</div>
+            <div class="panel-sub">Bubble size = Population · Color = Region</div>
+          </div>
+          <div class="chart-legend-row" style="padding:0;flex-wrap:wrap;gap:12px;">
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#D97706"></span>Americas</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#F59E0B"></span>LATAM</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#7C3AED"></span>WE</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#059669"></span>EEMEA</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#1A56DB"></span>APAC</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-wrap" style="height:340px;">
+            <canvas id="giniScatterChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-note">Higher Gini = more unequal · Bubble area proportional to population</div>
+      </div>
+      <!-- NEW: Big Mac Price Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Big Mac Price Index · USD · Jan 2025</div>
+            <div class="panel-sub">Markets with McDonald's presence only · Sorted descending</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-wrap" style="height:400px;">
+            <canvas id="bigMacChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-note">Dashed line: US baseline $5.79 · Green &lt;$4 · Amber $4–$6 · Rose &gt;$6</div>
+      </div>
+    </div>
+
+    <!-- Signal Distribution Column -->
+    <div class="panel" style="align-self:start;">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Market Signals · 2025</div>
+          <div class="panel-sub">FMCG demand environment classification</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="donut-wrap">
+          <canvas id="donutChart"></canvas>
+        </div>
+        <div class="signal-cards" id="signalCards"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HEATMAP ── -->
+<section id="heatmap">
+  <div class="heatmap-header">
+    <div class="section-title">Market Intelligence Heatmap · Comparative Ranking</div>
+    <div style="font-size:13px;color:var(--text-3);margin-top:6px;">Color intensity shows relative performance within each indicator. Click any market row for details.</div>
+  </div>
+  <div class="heatmap-table-wrap">
+    <table class="heatmap-table" id="heatmapTable">
+      <thead>
+        <tr>
+          <th>Market</th>
+          <th>GDP Growth %</th>
+          <th>Inflation %</th>
+          <th>GDP pc PPP</th>
+          <th>E-Comm %</th>
+          <th>Urb %</th>
+          <th>Median Age</th>
+          <th>Gini</th>
+          <th>Internet %</th>
+          <th>Govt Debt %</th>
+          <th>Signal</th>
+        </tr>
+      </thead>
+      <tbody id="heatmapBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── MARKETS TABLE ── -->
+<section id="markets">
+  <div class="markets-header">
+    <div class="section-title">All Markets</div>
+    <span class="count-badge" id="tableCount">47</span>
+  </div>
+
+  <div class="filter-row">
+    <div class="filter-group">
+      <span class="filter-label">Region</span>
+      <button class="pill-btn active" data-region="All" onclick="setRegion('All',this)">All</button>
+      <button class="pill-btn" data-region="Americas" onclick="setRegion('Americas',this)">Americas</button>
+      <button class="pill-btn" data-region="LATAM" onclick="setRegion('LATAM',this)">LATAM</button>
+      <button class="pill-btn" data-region="WE" onclick="setRegion('WE',this)">WE</button>
+      <button class="pill-btn" data-region="EEMEA" onclick="setRegion('EEMEA',this)">EEMEA</button>
+      <button class="pill-btn" data-region="APAC" onclick="setRegion('APAC',this)">APAC</button>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-group">
+      <span class="filter-label">Signal</span>
+      <select class="filter-select" id="signalFilter" onchange="applyFilters()">
+        <option value="All">All Signals</option>
+        <option value="Growing">Growing</option>
+        <option value="Stable">Stable</option>
+        <option value="Pressured">Pressured</option>
+        <option value="Volatile">Volatile</option>
+      </select>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-group">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search market..." oninput="applyFilters()">
+    </div>
+    <span class="sort-chip" id="sortChip">Sorted: GDP Growth ↓</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="marketTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable('name')" data-col="name">Market <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('region')" data-col="region">Region <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('gdp_growth')" data-col="gdp_growth" class="num sorted">GDP Growth % <span class="sort-arr">↓</span></th>
+          <th onclick="sortTable('inflation')" data-col="inflation" class="num">Inflation % <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('population_m')" data-col="population_m" class="num">Population (M) <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('gdp_pc_ppp')" data-col="gdp_pc_ppp" class="num">GDP pc PPP <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('unemployment_pct')" data-col="unemployment_pct" class="num">Unempl % <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('urbanization_pct')" data-col="urbanization_pct" class="num">Urb % <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('median_age')" data-col="median_age" class="num">Median Age <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('ecommerce_pct')" data-col="ecommerce_pct" class="num">E-comm % <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('internet_pct')" data-col="internet_pct" class="num">Internet % <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('gini')" data-col="gini" class="num">Gini <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('big_mac_usd')" data-col="big_mac_usd" class="num">Big Mac <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('private_consumption_pct')" data-col="private_consumption_pct" class="num">Priv Consump % <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('fmcg_signal')" data-col="fmcg_signal">Signal <span class="sort-arr">↕</span></th>
+          <th onclick="sortTable('current_account_pct')" data-col="current_account_pct" class="num">Curr Acct % <span class="sort-arr">↕</span></th>
+          <th data-col="retailer_insight">Retailer Insight</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── METHODOLOGY ── -->
+<section id="methodology">
+  <div class="meth-inner">
+    <div class="meth-header">
+      <div class="section-title">Methodology & Data Sources</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:6px;">Click any section to expand · All data sourced from publicly available international institutions</div>
+    </div>
+    <div class="accordion">
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span class="accordion-trigger-text">About This Dashboard</span>
+          <span class="accordion-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <p>The Market Intelligence Hub (MIH) Global FMCG Macro Dashboard is a single-pane intelligence tool covering 47 markets across five regions: Americas, LATAM, WE, EEMEA, and APAC. It is designed for commercial strategy teams, category managers, and regional leads who need a rapid, data-driven read on macroeconomic conditions relevant to FMCG consumer demand.</p>
+            <p>Each market is assessed against 11 core macro indicators, then assigned an FMCG demand signal (Growing, Stable, Pressured, or Volatile) based on a rules-based methodology combining GDP growth, inflation, and contextual factors. The dashboard is updated quarterly aligned with IMF World Economic Outlook releases.</p>
+            <p>Target audience: Regional commercial leadership, market entry and portfolio teams, supply chain and trade planning functions requiring macro context for investment decisions.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span class="accordion-trigger-text">Data Sources</span>
+          <span class="accordion-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <table class="meth-table">
+              <thead><tr><th>Source</th><th>Indicator</th><th>Vintage</th><th>Coverage</th></tr></thead>
+              <tbody>
+                <tr><td>IMF World Economic Outlook (WEO)</td><td>GDP Growth, Inflation, Unemployment, Current Account</td><td>Oct 2025 / Jan 2026 Update</td><td>47 markets</td></tr>
+                <tr><td>World Bank WDI</td><td>GDP per capita (PPP, int'l $), supplementary indicators</td><td>2024/2025</td><td>47 markets</td></tr>
+                <tr><td>UN World Population Prospects (WPP)</td><td>Population (mid-year 2025 estimate)</td><td>2024 revision</td><td>47 markets</td></tr>
+                <tr><td>UN World Urbanization Prospects (WUP)</td><td>Urban population share (%)</td><td>2025 edition, 2023 data</td><td>47 markets</td></tr>
+                <tr><td>ILO World Employment &amp; Social Outlook</td><td>Unemployment rate (modeled estimate)</td><td>2025</td><td>47 markets</td></tr>
+                <tr><td>The Economist Big Mac Index</td><td>Big Mac price in USD (currency valuation proxy)</td><td>January 2025</td><td>44 markets (3 N/A)</td></tr>
+                <tr><td>Euromonitor / Regional Reports</td><td>E-commerce penetration (% of total retail sales)</td><td>2024–2025 estimates</td><td>47 markets</td></tr>
+                <tr><td>TheGlobalEconomy.com (IMF-sourced)</td><td>Current account balance (% of GDP)</td><td>2024 latest</td><td>47 markets</td></tr>
+                <tr><td>ITU / GSMA</td><td>Internet penetration %, Mobile subscriptions per 100</td><td>2024/2025</td><td>47 markets</td></tr>
+                <tr><td>World Bank / IMF</td><td>Gini coefficient, Private consumption %, Govt debt %</td><td>Latest available</td><td>47 markets</td></tr>
+                <tr><td>Numbeo</td><td>Coca-Cola price (USD)</td><td>2025</td><td>47 markets</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span class="accordion-trigger-text">Indicator Definitions</span>
+          <span class="accordion-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <table class="meth-table">
+              <thead><tr><th>Indicator</th><th>Definition</th><th>Unit</th><th>Source</th></tr></thead>
+              <tbody>
+                <tr><td>GDP Growth</td><td>Annual real GDP growth rate, 2025 IMF forecast</td><td>% per year</td><td>IMF WEO Oct 2025</td></tr>
+                <tr><td>Inflation</td><td>Average consumer price inflation (CPI), annual % change, 2025 forecast</td><td>% per year</td><td>IMF WEO Oct 2025</td></tr>
+                <tr><td>Population</td><td>Total mid-year population estimate, 2025</td><td>Millions</td><td>UN WPP 2024 rev.</td></tr>
+                <tr><td>Urbanization</td><td>Share of population living in urban areas</td><td>%</td><td>UN WUP 2025</td></tr>
+                <tr><td>GDP per Capita (PPP)</td><td>GDP per capita in purchasing power parity terms (international dollars), 2025 estimate</td><td>Int'l $ (000s)</td><td>IMF WEO 2025</td></tr>
+                <tr><td>Unemployment</td><td>ILO-modeled unemployment rate as % of total labor force, 2025</td><td>%</td><td>IMF WEO / ILO 2025</td></tr>
+                <tr><td>E-commerce Penetration</td><td>Online retail sales as % of total retail sales, 2024–2025 estimate</td><td>%</td><td>Euromonitor / Regional reports</td></tr>
+                <tr><td>Big Mac Price (USD)</td><td>Local Big Mac price converted to USD at prevailing exchange rate; proxy for relative purchasing power and currency valuation</td><td>USD</td><td>The Economist, Jan 2025</td></tr>
+                <tr><td>FMCG Signal</td><td>Rules-based demand environment classification (see Signal Methodology)</td><td>Category</td><td>MIH proprietary</td></tr>
+                <tr><td>Current Account Balance</td><td>Net balance of trade in goods/services + net income + net transfers, as % of GDP</td><td>% of GDP</td><td>IMF / TheGlobalEconomy.com 2024</td></tr>
+                <tr><td>Median Age</td><td>Median age of total population, 2024 estimate</td><td>Years</td><td>UN WPP 2024</td></tr>
+                <tr><td>Gini Coefficient</td><td>Measure of income inequality (0=perfect equality, 100=perfect inequality)</td><td>Index</td><td>World Bank latest</td></tr>
+                <tr><td>Internet Penetration</td><td>Individuals using the internet as % of total population</td><td>%</td><td>ITU 2024/2025</td></tr>
+                <tr><td>Private Consumption</td><td>Household final consumption expenditure as % of GDP</td><td>%</td><td>World Bank 2024</td></tr>
+                <tr><td>Government Debt</td><td>General government gross debt as % of GDP</td><td>%</td><td>IMF 2024/2025</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span class="accordion-trigger-text">FMCG Signal Methodology</span>
+          <span class="accordion-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <p>Each market is assigned one of four FMCG demand environment signals based on a rules-based framework combining real GDP growth, inflation, and contextual qualitative factors. Signals reflect the expected near-term operating environment for FMCG businesses.</p>
+            <div class="signal-legend">
+              <div class="signal-legend-item" style="border-color:var(--emerald);background:var(--emerald-bg);">
+                <div class="signal-legend-title" style="color:var(--emerald);">Growing</div>
+                <div class="signal-legend-desc">Real GDP growth &gt;3% AND inflation &lt;6%. Consumer demand expanding, volume growth likely. Favorable for investment and portfolio premiumization.</div>
+              </div>
+              <div class="signal-legend-item" style="border-color:#BFDBFE;background:#DBEAFE;">
+                <div class="signal-legend-title" style="color:var(--blue);">Stable</div>
+                <div class="signal-legend-desc">GDP growth 1–3% with contained inflation. Steady demand environment, limited macro risk. Suitable for distribution deepening and base maintenance.</div>
+              </div>
+              <div class="signal-legend-item" style="border-color:var(--amber);background:var(--amber-bg);">
+                <div class="signal-legend-title" style="color:var(--amber);">Pressured</div>
+                <div class="signal-legend-desc">Low GDP growth (&lt;1%) OR elevated inflation constraining consumer spending power. Demand under pressure; affordability key. Value-tier strategies relevant.</div>
+              </div>
+              <div class="signal-legend-item" style="border-color:var(--rose);background:var(--rose-bg);">
+                <div class="signal-legend-title" style="color:var(--rose);">Volatile</div>
+                <div class="signal-legend-desc">Very high inflation (&gt;15%), currency instability, or sharp GDP swings. High uncertainty; demand patterns unpredictable. Requires close monitoring and flexible pricing.</div>
+              </div>
+            </div>
+            <p style="margin-top:16px;font-size:12px;color:var(--text-3);">Note: Signal assignments incorporate qualitative override where quantitative thresholds are borderline, e.g., Argentina (Growing GDP, Very High Inflation → Volatile) or New Zealand (sub-1% GDP, low inflation → Pressured).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span class="accordion-trigger-text">Color System</span>
+          <span class="accordion-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <p>A consistent color grammar is applied throughout the dashboard to minimize cognitive load.</p>
+            <table class="meth-table">
+              <thead><tr><th>Element</th><th>Color</th><th>Meaning</th></tr></thead>
+              <tbody>
+                <tr><td>Americas region</td><td style="color:#D97706;font-weight:600;">Amber #D97706</td><td>North America markets</td></tr>
+                <tr><td>LATAM region</td><td style="color:#B45309;font-weight:600;">Dark Amber #B45309</td><td>Latin America markets</td></tr>
+                <tr><td>WE region</td><td style="color:#7C3AED;font-weight:600;">Violet #7C3AED</td><td>Western Europe markets</td></tr>
+                <tr><td>EEMEA region</td><td style="color:#059669;font-weight:600;">Emerald #059669</td><td>Eastern Europe, Middle East &amp; Africa markets</td></tr>
+                <tr><td>APAC region</td><td style="color:#1A56DB;font-weight:600;">Blue #1A56DB</td><td>Asia-Pacific markets</td></tr>
+                <tr><td>Growing signal</td><td style="color:#059669;font-weight:600;">Emerald #059669</td><td>Expanding demand environment</td></tr>
+                <tr><td>Stable signal</td><td style="color:#1A56DB;font-weight:600;">Blue #1A56DB</td><td>Steady, predictable conditions</td></tr>
+                <tr><td>Pressured signal</td><td style="color:#D97706;font-weight:600;">Amber #D97706</td><td>Demand under macroeconomic stress</td></tr>
+                <tr><td>Volatile signal</td><td style="color:#E11D48;font-weight:600;">Rose #E11D48</td><td>High uncertainty, instability</td></tr>
+                <tr><td>Positive current account</td><td style="color:#059669;font-weight:600;">Emerald</td><td>Surplus / net external creditor position</td></tr>
+                <tr><td>Negative current account</td><td style="color:#E11D48;font-weight:600;">Rose</td><td>Deficit / net external borrower position</td></tr>
+                <tr><td>Heatmap: greener</td><td style="color:#059669;font-weight:600;">Emerald gradient</td><td>Better relative performance on indicator</td></tr>
+                <tr><td>Heatmap: redder</td><td style="color:#E11D48;font-weight:600;">Rose gradient</td><td>Weaker relative performance on indicator</td></tr>
+                <tr><td>Pulse animation</td><td>Growing (green) / Volatile (red)</td><td>Indicates dynamic / attention-required state</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span class="accordion-trigger-text">Limitations</span>
+          <span class="accordion-chevron">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <p><strong>Forecasts, not actuals.</strong> GDP growth and inflation figures are IMF WEO October 2025 forecasts. Actual outturns will differ, particularly in markets with high policy uncertainty (Turkey, Argentina, Nigeria, Egypt).</p>
+            <p><strong>Vintage lag.</strong> Current account data reflects 2024 actuals (latest available). E-commerce penetration estimates are 2024–2025 and may not capture rapid structural shifts in digital retail.</p>
+            <p><strong>Big Mac coverage gaps.</strong> McDonald's does not operate in Kenya, Nigeria, or Bangladesh. Big Mac prices are shown as N/A for these markets. The Big Mac Index is a simplified PPP proxy and should not be treated as a comprehensive exchange rate assessment.</p>
+            <p><strong>Aggregation risk.</strong> GDP and inflation averages mask significant sub-national variation. India's national GDP growth of 6.6% conceals major interstate disparities. Urban vs. rural dynamics are partially proxied by urbanization rate but not fully captured.</p>
+            <p><strong>FMCG Signal is macro-only.</strong> The signal reflects macroeconomic conditions and does not capture category-specific dynamics, competitive intensity, regulatory environment, or channel structure. It is a starting point for market assessment, not a complete picture.</p>
+            <p><strong>Internal use only.</strong> This dashboard is intended for internal strategic planning purposes. Data should be validated against primary sources before external publication or investment decisions.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">Market Intelligence Hub · Global FMCG Macro Dashboard · Updated 2025-Q4 · 47 Markets · Sources: IMF WEO · World Bank · UN WPP/WUP · ILO · The Economist · Numbeo · Euromonitor</span>
+    <span class="footer-internal">Internal use only</span>
+  </div>
+</footer>
+
+</div><!-- /#main-dashboard -->
+
+<!-- ── GUIDE SECTION ── -->
+<div id="guide-section" style="display:none;">
+  <button class="guide-back-btn" onclick="toggleGuide()">&#8592; Back to Dashboard</button>
+
+  <div class="guide-grid">
+
+    <!-- Column 1: How to Navigate -->
+    <div class="guide-col">
+      <div class="guide-col-heading">How to Navigate</div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F30D; Browse all 47 markets</div>
+          <div class="guide-step-desc">Sorted by region. Use the region filter buttons at the top to narrow down to Americas, LATAM, WE, EEMEA, or APAC.</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F50D; Search &amp; sort</div>
+          <div class="guide-step-desc">Type in the search box to filter markets by name. Click any column header to sort the table ascending or descending.</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F4CA; Read the KPI columns</div>
+          <div class="guide-step-desc">Each column shows a key macro indicator. Color coding indicates signal strength — see the KPI Reference column for definitions.</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">4</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F3AF; FMCG Signal badge</div>
+          <div class="guide-step-desc"><strong style="color:#059669;">GREEN</strong> = Growing &nbsp;·&nbsp; <strong style="color:#1A56DB;">BLUE</strong> = Stable &nbsp;·&nbsp; <strong style="color:#D97706;">AMBER</strong> = Pressured &nbsp;·&nbsp; <strong style="color:#E11D48;">RED</strong> = Volatile</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">5</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F321;&#xFE0F; Heatmap</div>
+          <div class="guide-step-desc">Color intensity shows how markets compare across all indicators simultaneously. Greener = better relative performance on that indicator.</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">6</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F517; Scatter charts</div>
+          <div class="guide-step-desc">Bubble position reflects a market's relationship between two variables. Bubble size is proportional to population.</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">7</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x26A1; Five Forces</div>
+          <div class="guide-step-desc">Strategic context in the hero cards: Growth Drivers, Inflation Pressure, Wealth Tier, Digital Leap, and Demographics — each showing the global leader and average.</div>
+        </div>
+      </div>
+
+      <div class="guide-step-card">
+        <div class="guide-step-num">8</div>
+        <div class="guide-step-body">
+          <div class="guide-step-title">&#x1F4E5; Export</div>
+          <div class="guide-step-desc">Use your browser's table or right-click features to copy data. The table supports sorting and filtering before you export your selection.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2: KPI Reference -->
+    <div class="guide-col">
+      <div class="guide-col-heading">KPI Reference</div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">GDP Growth %</span><span class="guide-kpi-unit">% p.a.</span></div>
+        <div class="guide-kpi-def">Annual real GDP change. Higher = expanding economy. 3%+ generally considered healthy growth.</div>
+        <div class="guide-kpi-source">&#x1F4CB; IMF WEO Oct 2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Inflation %</span><span class="guide-kpi-unit">% p.a.</span></div>
+        <div class="guide-kpi-def">CPI annual change. 2–3% = healthy. Above 6% signals consumer purchasing power pressure. Above 15% = volatile.</div>
+        <div class="guide-kpi-source">&#x1F4CB; IMF WEO Oct 2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Population (M)</span><span class="guide-kpi-unit">millions</span></div>
+        <div class="guide-kpi-def">Total mid-year population in millions, 2025 estimate. Indicates market size potential.</div>
+        <div class="guide-kpi-source">&#x1F4CB; UN WPP 2024</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Urbanization %</span><span class="guide-kpi-unit">%</span></div>
+        <div class="guide-kpi-def">Share of population in urban areas. Higher urbanization = more organized formal retail channels.</div>
+        <div class="guide-kpi-source">&#x1F4CB; UN WUP 2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">GDP per Capita PPP</span><span class="guide-kpi-unit">Int'l $</span></div>
+        <div class="guide-kpi-def">Purchasing power income per person in international dollars. Primary wealth tier indicator.</div>
+        <div class="guide-kpi-source">&#x1F4CB; IMF / World Bank 2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Unemployment %</span><span class="guide-kpi-unit">%</span></div>
+        <div class="guide-kpi-def">Percentage of labor force without work. Lower = more consumer spending power. ILO modeled estimates.</div>
+        <div class="guide-kpi-source">&#x1F4CB; ILO ILOSTAT 2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">E-commerce %</span><span class="guide-kpi-unit">%</span></div>
+        <div class="guide-kpi-def">Online share of total retail sales. Reflects digital channel maturity and consumer behavior shift.</div>
+        <div class="guide-kpi-source">&#x1F4CB; Euromonitor 2024–25</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Big Mac (USD)</span><span class="guide-kpi-unit">USD</span></div>
+        <div class="guide-kpi-def">Local Big Mac price converted to USD. Implied purchasing power parity gauge — lower vs US baseline suggests undervalued currency.</div>
+        <div class="guide-kpi-source">&#x1F4CB; The Economist Jan 2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">FMCG Signal</span><span class="guide-kpi-unit">category</span></div>
+        <div class="guide-kpi-def">MIH composite demand signal: Growing / Stable / Pressured / Volatile. Rules-based, incorporating GDP, inflation, and contextual factors.</div>
+        <div class="guide-kpi-source">&#x1F4CB; MIH proprietary</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Current Account % GDP</span><span class="guide-kpi-unit">% GDP</span></div>
+        <div class="guide-kpi-def">External balance of trade, income, and transfers. Positive = net exporter / external creditor. Negative = deficit.</div>
+        <div class="guide-kpi-source">&#x1F4CB; IMF 2024</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Gini Coefficient</span><span class="guide-kpi-unit">0–100</span></div>
+        <div class="guide-kpi-def">Income inequality index. 0 = perfect equality, 100 = perfect inequality. Higher = more unequal income distribution.</div>
+        <div class="guide-kpi-source">&#x1F4CB; World Bank latest</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Internet %</span><span class="guide-kpi-unit">%</span></div>
+        <div class="guide-kpi-def">Population with internet access. Digital consumer proxy — higher = greater e-commerce and digital marketing reach.</div>
+        <div class="guide-kpi-source">&#x1F4CB; ITU 2024/2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Private Consumption %</span><span class="guide-kpi-unit">% GDP</span></div>
+        <div class="guide-kpi-def">Household spending as % of GDP. Higher = more consumer-driven economy; directly relevant to FMCG volume potential.</div>
+        <div class="guide-kpi-source">&#x1F4CB; World Bank 2024</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Govt Debt % GDP</span><span class="guide-kpi-unit">% GDP</span></div>
+        <div class="guide-kpi-def">General government gross debt as share of GDP. Indicator of fiscal space and macroeconomic stability risk.</div>
+        <div class="guide-kpi-source">&#x1F4CB; IMF 2024/2025</div>
+      </div>
+
+      <div class="guide-kpi-card">
+        <div class="guide-kpi-header"><span class="guide-kpi-name">Median Age</span><span class="guide-kpi-unit">years</span></div>
+        <div class="guide-kpi-def">Population median age. Younger markets = growing consumer base; older markets = premiumization opportunity.</div>
+        <div class="guide-kpi-source">&#x1F4CB; UN WPP 2024</div>
+      </div>
+    </div>
+
+    <!-- Column 3: Methodology & Sources -->
+    <div class="guide-col">
+      <div class="guide-col-heading">Data Methodology</div>
+
+      <div class="guide-vintage-card">
+        &#x1F4C5; IMF WEO October 2025 + January 2026 update
+      </div>
+
+      <div class="guide-meth-label">Primary Sources</div>
+      <div class="guide-sources-list">
+        <span class="guide-source-chip">IMF World Economic Outlook</span>
+        <span class="guide-source-chip">World Bank WDI</span>
+        <span class="guide-source-chip">UN World Population Prospects 2024</span>
+        <span class="guide-source-chip">UN World Urbanization Prospects 2025</span>
+        <span class="guide-source-chip">ILO ILOSTAT</span>
+        <span class="guide-source-chip">The Economist Big Mac Index</span>
+        <span class="guide-source-chip">ITU (Int'l Telecommunication Union)</span>
+        <span class="guide-source-chip">GSMA Mobile Connectivity Index</span>
+        <span class="guide-source-chip">Euromonitor International</span>
+        <span class="guide-source-chip">Numbeo</span>
+      </div>
+
+      <div class="guide-coverage-card">
+        &#x1F30D; 47 markets across 5 regions: Americas, LATAM, Western Europe (WE), EEMEA, Asia Pacific (APAC)
+      </div>
+
+      <div class="guide-meth-label">FMCG Signal Methodology</div>
+      <div class="guide-meth-text">
+        Signal assessed based on GDP momentum, inflation trajectory, unemployment trend, and current account balance.<br><br>
+        <strong style="color:#059669;">Growing</strong> — positive momentum across ≥3 indicators: GDP &gt;3% AND inflation &lt;6%.<br>
+        <strong style="color:#1A56DB;">Stable</strong> — mixed signals, no acute risks; GDP 1–3% with contained inflation.<br>
+        <strong style="color:#D97706;">Pressured</strong> — inflation &gt;6% or unemployment &gt;8% with weak growth; affordability key.<br>
+        <strong style="color:#E11D48;">Volatile</strong> — high dispersion across indicators; inflation &gt;15% or sharp GDP swings.
+      </div>
+
+      <div class="guide-meth-label">Data Vintage &amp; Update Cadence</div>
+      <div class="guide-meth-text">
+        GDP growth and inflation figures are IMF WEO October 2025 forecasts updated with the January 2026 revision. Current account data reflects 2024 actuals (latest available). E-commerce penetration estimates are 2024–2025. Big Mac prices are January 2025. Population and urbanization data from the latest UN 2024/2025 revision rounds.
+      </div>
+
+      <div class="guide-meth-label">Limitations</div>
+      <div class="guide-meth-text">
+        National averages mask sub-national variation. Big Mac coverage excludes Kenya, Nigeria, and Bangladesh (McDonald's not present). FMCG Signal is macro-only and does not capture category-specific dynamics, competitive intensity, or channel structure.
+      </div>
+
+      <div class="guide-disclaimer">
+        &#x26A0;&#xFE0F; For internal strategic use only. Not for external client distribution without accompanying methodology documentation. Market Intelligence Hub (MIH) — Internal Data Team.
+      </div>
+    </div>
+
+  </div>
+</div><!-- /#guide-section -->
+
+<!-- ── MARKET DETAIL MODAL ── -->
+<div class="market-modal-overlay" id="marketModal" onclick="closeModal(event)">
+  <div class="market-modal" id="marketModalInner">
+    <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+    <div class="modal-title" id="modalTitle">—</div>
+    <div class="modal-subtitle" id="modalSubtitle">—</div>
+    <div class="modal-grid" id="modalGrid"></div>
+    <div class="modal-insight-label">Retailer Insight</div>
+    <div class="modal-insight" id="modalInsight">—</div>
+  </div>
+</div>
+
+<!-- ── DATA & CONFIG ── -->
+<script src="../data/data.js"></script>
+<script src="../config.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════
+const REGION_COLORS = { Americas: '#D97706', LATAM: '#F59E0B', WE: '#7C3AED', EEMEA: '#059669', APAC: '#1A56DB' };
+const SIGNAL_COLORS = { Growing: '#059669', Stable: '#1A56DB', Pressured: '#D97706', Volatile: '#E11D48' };
+const SIGNAL_BG     = { Growing: '#DCFCE7', Stable: '#DBEAFE', Pressured: '#FEF3C7', Volatile: '#FFE4E6' };
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let allMarkets = [];
+let currentRegion  = 'All';
+let currentSignal  = 'All';
+let currentSearch  = '';
+let sortCol        = 'gdp_growth';
+let sortDir        = 'desc';
+let barChartInst   = null;
+let scatterChartInst = null;
+let donutChartInst = null;
+let giniScatterInst = null;
+let bigMacChartInst = null;
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function () {
+  if (!window.MIH_DATA || !window.MIH_DATA.markets) {
+    document.body.innerHTML = '<div style="padding:80px;text-align:center;font-family:sans-serif;">Error: data.js failed to load. Please ensure you opened this file through a local server or the data file is accessible.</div>';
+    return;
+  }
+  allMarkets = window.MIH_DATA.markets;
+
+  buildForceCards();
+  buildSignalCards();
+  buildCharts();
+  buildHeatmap();
+  renderTable();
+});
+
+// ═══════════════════════════════════════════════════════════
+// FIVE FORCES KPI CARDS
+// ═══════════════════════════════════════════════════════════
+function buildForceCards() {
+  const m = allMarkets;
+  const total = m.length;
+
+  // 1. Growth Engine
+  const fastest = m.reduce((a, b) => (b.gdp_growth || 0) > (a.gdp_growth || 0) ? b : a);
+  const avgGdp = m.reduce((s, x) => s + (x.gdp_growth || 0), 0) / total;
+  document.getElementById('force-growth-val').textContent = fastest.name.substring(0, 10) + ' +' + (fastest.gdp_growth).toFixed(1) + '%';
+  document.getElementById('force-growth-insight').textContent =
+    'Fastest: ' + fastest.name + ' +' + fastest.gdp_growth.toFixed(1) + '% | Avg: +' + avgGdp.toFixed(1) + '%';
+
+  // 2. Inflation Pressure
+  const hottest = m.reduce((a, b) => (b.inflation || 0) > (a.inflation || 0) ? b : a);
+  const elevated = m.filter(x => (x.inflation || 0) > 10).length;
+  document.getElementById('force-inflation-val').textContent = hottest.name.substring(0, 10) + ' ' + hottest.inflation.toFixed(0) + '%';
+  document.getElementById('force-inflation-insight').textContent =
+    'Hottest: ' + hottest.name + ' ' + hottest.inflation.toFixed(0) + '% | ' + elevated + ' markets elevated';
+
+  // 3. Wealth Tier
+  const richest = m.reduce((a, b) => (b.gdp_pc_ppp || 0) > (a.gdp_pc_ppp || 0) ? b : a);
+  const avgPc = m.reduce((s, x) => s + (x.gdp_pc_ppp || 0), 0) / total;
+  document.getElementById('force-wealth-val').textContent = richest.name.substring(0, 10) + ' $' + Math.round(richest.gdp_pc_ppp / 1000) + 'K';
+  document.getElementById('force-wealth-insight').textContent =
+    'Leader: ' + richest.name + ' $' + Math.round(richest.gdp_pc_ppp / 1000) + 'K | Avg: $' + Math.round(avgPc / 1000) + 'K';
+
+  // 4. Digital Leap
+  const topDigital = m.reduce((a, b) => (b.ecommerce_pct || 0) > (a.ecommerce_pct || 0) ? b : a);
+  const avgEcomm = m.reduce((s, x) => s + (x.ecommerce_pct || 0), 0) / total;
+  const topDigitalPct = topDigital.ecommerce_pct ?? 0;
+  document.getElementById('force-digital-val').textContent = topDigital.name.substring(0, 10) + ' ' + topDigitalPct.toFixed(0) + '%';
+  document.getElementById('force-digital-insight').textContent =
+    'Leader: ' + topDigital.name + ' ' + topDigitalPct.toFixed(0) + '% | Avg: ' + avgEcomm.toFixed(1) + '%';
+
+  // 5. Demographics
+  const withAge = m.filter(x => x.median_age != null);
+  const youngest = withAge.reduce((a, b) => b.median_age < a.median_age ? b : a);
+  const oldest = withAge.reduce((a, b) => b.median_age > a.median_age ? b : a);
+  document.getElementById('force-demo-val').textContent = youngest.name.substring(0, 8) + ' ' + youngest.median_age + 'y';
+  document.getElementById('force-demo-insight').textContent =
+    'Youngest: ' + youngest.name + ' ' + youngest.median_age + 'yrs | Oldest: ' + oldest.name + ' ' + oldest.median_age + 'yrs';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIGNAL CARDS
+// ═══════════════════════════════════════════════════════════
+function buildSignalCards() {
+  const signals = ['Growing', 'Stable', 'Pressured', 'Volatile'];
+  const container = document.getElementById('signalCards');
+  container.innerHTML = '';
+  signals.forEach(sig => {
+    const markets = allMarkets.filter(m => m.fmcg_signal === sig);
+    const names = markets.map(m => m.name).slice(0, 5).join(', ') + (markets.length > 5 ? '…' : '');
+    const card = document.createElement('div');
+    card.className = 'signal-card';
+    card.style.borderColor = SIGNAL_COLORS[sig] + '40';
+    card.style.background = SIGNAL_BG[sig];
+    card.innerHTML = `
+      <div class="signal-card-left">
+        <span class="signal-dot" style="background:${SIGNAL_COLORS[sig]}"></span>
+        <div>
+          <div class="signal-name" style="color:${SIGNAL_COLORS[sig]}">${sig}</div>
+          <div class="signal-markets">${names}</div>
+        </div>
+      </div>
+      <span class="signal-count mono" style="color:${SIGNAL_COLORS[sig]}">${markets.length}</span>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════════════
+function getFilteredMarkets() {
+  return allMarkets.filter(m => {
+    if (currentRegion !== 'All' && m.region !== currentRegion) return false;
+    if (currentSignal !== 'All' && m.fmcg_signal !== currentSignal) return false;
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      if (!m.name.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function buildCharts() {
+  buildBarChart();
+  buildScatterChart();
+  buildDonutChart();
+  buildGiniScatterChart();
+  buildBigMacChart();
+}
+
+function buildBarChart() {
+  const filtered = getFilteredMarkets();
+  const sorted = [...filtered].sort((a, b) => b.gdp_growth - a.gdp_growth);
+
+  const labels = sorted.map(m => m.name);
+  const values = sorted.map(m => m.gdp_growth);
+  const colors = sorted.map(m => SIGNAL_COLORS[m.fmcg_signal] || '#94A3B8');
+
+  const ctx = document.getElementById('barChart').getContext('2d');
+
+  if (barChartInst) barChartInst.destroy();
+
+  barChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'GDP Growth 2025 (%)',
+        data: values,
+        backgroundColor: colors,
+        borderRadius: 3,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const m = sorted[ctx.dataIndex];
+              return [
+                `GDP Growth: ${m.gdp_growth}%`,
+                `Inflation: ${m.inflation}%`,
+                `Signal: ${m.fmcg_signal}`,
+                `Population: ${m.population_m}M`,
+                `GDP pc PPP: $${(m.gdp_pc_ppp || 0).toLocaleString()}`,
+              ];
+            },
+            title: function(ctx) { return sorted[ctx[0].dataIndex].name; }
+          },
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Space Grotesk', size: 13, weight: '700' },
+          bodyFont: { family: 'Fira Code', size: 12 },
+          padding: 12,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'GDP Growth 2025 (%)', color: '#94A3B8', font: { family: 'Space Grotesk', size: 11 } },
+          grid: { color: '#E2E8F0' },
+          ticks: { font: { family: 'Fira Code', size: 11 }, color: '#475569' }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11 }, color: '#475569' }
+        }
+      }
+    }
+  });
+}
+
+function buildScatterChart() {
+  const filtered = getFilteredMarkets();
+
+  const regions = ['Americas', 'LATAM', 'WE', 'EEMEA', 'APAC'];
+  const datasets = regions.map(region => {
+    const regionMarkets = filtered.filter(m => m.region === region);
+    return {
+      label: region,
+      data: regionMarkets.map(m => ({
+        x: m.gdp_growth,
+        y: m.inflation,
+        r: Math.min(Math.sqrt(m.population_m || 1) * 0.8, 20),
+        market: m
+      })),
+      backgroundColor: REGION_COLORS[region] + 'BB',
+      borderColor: REGION_COLORS[region],
+      borderWidth: 1.5,
+    };
+  });
+
+  const ctx = document.getElementById('scatterChart').getContext('2d');
+  if (scatterChartInst) scatterChartInst.destroy();
+
+  const refLinePlugin = {
+    id: 'refLines',
+    afterDraw(chart) {
+      const { ctx: c, chartArea: { top, bottom, left, right }, scales } = chart;
+      c.save();
+      c.setLineDash([5, 4]);
+      c.strokeStyle = '#94A3B8';
+      c.lineWidth = 1;
+      if (scales.x.min <= 0 && scales.x.max >= 0) {
+        const xPos = scales.x.getPixelForValue(0);
+        c.beginPath(); c.moveTo(xPos, top); c.lineTo(xPos, bottom); c.stroke();
+      }
+      if (scales.y.min <= 6 && scales.y.max >= 6) {
+        const yPos = scales.y.getPixelForValue(6);
+        c.beginPath(); c.moveTo(left, yPos); c.lineTo(right, yPos); c.stroke();
+      }
+      c.restore();
+    }
+  };
+
+  scatterChartInst = new Chart(ctx, {
+    type: 'bubble',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const d = ctx.raw;
+              if (!d.market) return '';
+              const m = d.market;
+              return [
+                `${m.name} (${m.region})`,
+                `GDP Growth: ${m.gdp_growth}%`,
+                `Inflation: ${m.inflation}%`,
+                `Population: ${m.population_m}M`,
+                `Signal: ${m.fmcg_signal}`,
+              ];
+            },
+            title: () => ''
+          },
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Space Grotesk', size: 13 },
+          bodyFont: { family: 'Fira Code', size: 11 },
+          padding: 12,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'GDP Growth 2025 (%)', color: '#94A3B8', font: { family: 'Space Grotesk', size: 11 } },
+          grid: { color: '#E2E8F0' },
+          ticks: { font: { family: 'Fira Code', size: 11 }, color: '#475569' }
+        },
+        y: {
+          title: { display: true, text: 'Inflation 2025 (%)', color: '#94A3B8', font: { family: 'Space Grotesk', size: 11 } },
+          grid: { color: '#E2E8F0' },
+          ticks: { font: { family: 'Fira Code', size: 11 }, color: '#475569' }
+        }
+      }
+    },
+    plugins: [refLinePlugin]
+  });
+}
+
+function buildDonutChart() {
+  const signals = ['Growing', 'Stable', 'Pressured', 'Volatile'];
+  const counts = signals.map(s => allMarkets.filter(m => m.fmcg_signal === s).length);
+  const colors = signals.map(s => SIGNAL_COLORS[s]);
+
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  if (donutChartInst) donutChartInst.destroy();
+
+  const centerTextPlugin = {
+    id: 'centerText',
+    afterDraw(chart) {
+      const { ctx: c, chartArea: { left, top, width, height } } = chart;
+      c.save();
+      const x = left + width / 2;
+      const y = top + height / 2;
+      c.textAlign = 'center';
+      c.textBaseline = 'middle';
+      c.fillStyle = '#0B1E3D';
+      c.font = '700 22px "Fira Code", monospace';
+      c.fillText(allMarkets.length, x, y - 10);
+      c.fillStyle = '#94A3B8';
+      c.font = '500 11px "Space Grotesk", sans-serif';
+      c.fillText('Markets', x, y + 12);
+      c.restore();
+    }
+  };
+
+  donutChartInst = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: signals,
+      datasets: [{
+        data: counts,
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: '#fff',
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      animation: { duration: 800, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ` ${ctx.label}: ${ctx.parsed} markets`;
+            }
+          },
+          backgroundColor: '#0F172A',
+          bodyFont: { family: 'Space Grotesk', size: 13 },
+          padding: 10,
+          cornerRadius: 8,
+        }
+      }
+    },
+    plugins: [centerTextPlugin]
+  });
+}
+
+function buildGiniScatterChart() {
+  const regions = ['Americas', 'LATAM', 'WE', 'EEMEA', 'APAC'];
+  const datasets = regions.map(region => {
+    const regionMarkets = allMarkets.filter(m => m.region === region && m.gini != null && m.gdp_pc_ppp != null);
+    return {
+      label: region,
+      data: regionMarkets.map(m => ({
+        x: m.gdp_pc_ppp,
+        y: m.gini,
+        r: Math.min(Math.sqrt(m.population_m || 1) * 0.7, 18),
+        market: m
+      })),
+      backgroundColor: REGION_COLORS[region] + 'BB',
+      borderColor: REGION_COLORS[region],
+      borderWidth: 1.5,
+    };
+  });
+
+  const ctx = document.getElementById('giniScatterChart').getContext('2d');
+  if (giniScatterInst) giniScatterInst.destroy();
+
+  giniScatterInst = new Chart(ctx, {
+    type: 'bubble',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const d = ctx.raw;
+              if (!d.market) return '';
+              const m = d.market;
+              return [
+                `${m.name} (${m.region})`,
+                `GDP pc PPP: $${(m.gdp_pc_ppp || 0).toLocaleString()}`,
+                `Gini: ${m.gini ?? 'N/A'}`,
+                `Population: ${m.population_m}M`,
+              ];
+            },
+            title: () => ''
+          },
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Space Grotesk', size: 13 },
+          bodyFont: { family: 'Fira Code', size: 11 },
+          padding: 12,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'GDP per Capita PPP (Int\'l $)', color: '#94A3B8', font: { family: 'Space Grotesk', size: 11 } },
+          grid: { color: '#E2E8F0' },
+          ticks: {
+            font: { family: 'Fira Code', size: 11 }, color: '#475569',
+            callback: v => '$' + (v/1000).toFixed(0) + 'K'
+          }
+        },
+        y: {
+          title: { display: true, text: 'Gini Coefficient', color: '#94A3B8', font: { family: 'Space Grotesk', size: 11 } },
+          grid: { color: '#E2E8F0' },
+          ticks: { font: { family: 'Fira Code', size: 11 }, color: '#475569' }
+        }
+      }
+    }
+  });
+}
+
+function buildBigMacChart() {
+  const withBigMac = allMarkets
+    .filter(m => m.big_mac_usd != null)
+    .sort((a, b) => b.big_mac_usd - a.big_mac_usd);
+
+  const labels = withBigMac.map(m => m.name);
+  const values = withBigMac.map(m => m.big_mac_usd);
+  const colors = withBigMac.map(m => {
+    if (m.big_mac_usd > 6) return '#E11D48';
+    if (m.big_mac_usd >= 4) return '#D97706';
+    return '#059669';
+  });
+
+  const ctx = document.getElementById('bigMacChart').getContext('2d');
+  if (bigMacChartInst) bigMacChartInst.destroy();
+
+  const usBaselinePlugin = {
+    id: 'usBaseline',
+    afterDraw(chart) {
+      const { ctx: c, chartArea: { top, bottom }, scales } = chart;
+      const xPos = scales.x.getPixelForValue(5.79);
+      c.save();
+      c.setLineDash([5, 4]);
+      c.strokeStyle = '#1A56DB';
+      c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(xPos, top); c.lineTo(xPos, bottom); c.stroke();
+      c.fillStyle = '#1A56DB';
+      c.font = '500 10px "Space Grotesk", sans-serif';
+      c.textAlign = 'center';
+      c.fillText('US $5.79', xPos, top - 4);
+      c.restore();
+    }
+  };
+
+  bigMacChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Big Mac Price (USD)',
+        data: values,
+        backgroundColor: colors,
+        borderRadius: 3,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const m = withBigMac[ctx.dataIndex];
+              const diff = ((m.big_mac_usd - 5.79) / 5.79 * 100).toFixed(1);
+              const sign = diff >= 0 ? '+' : '';
+              return [
+                `Price: $${m.big_mac_usd.toFixed(2)}`,
+                `vs US baseline: ${sign}${diff}%`,
+                `Region: ${m.region}`,
+              ];
+            },
+            title: function(ctx) { return withBigMac[ctx[0].dataIndex].name; }
+          },
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Space Grotesk', size: 13, weight: '700' },
+          bodyFont: { family: 'Fira Code', size: 12 },
+          padding: 12,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Price (USD)', color: '#94A3B8', font: { family: 'Space Grotesk', size: 11 } },
+          grid: { color: '#E2E8F0' },
+          ticks: { font: { family: 'Fira Code', size: 11 }, color: '#475569', callback: v => '$' + v.toFixed(2) }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 10 }, color: '#475569' }
+        }
+      }
+    },
+    plugins: [usBaselinePlugin]
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// HEATMAP
+// ═══════════════════════════════════════════════════════════
+function heatColor(value, min, max, invert, targetR, targetG, targetB) {
+  if (value === null || value === undefined) return '#F1F5F9';
+  let t = (max === min) ? 0.5 : (value - min) / (max - min);
+  if (invert) t = 1 - t;
+  t = Math.max(0, Math.min(1, t));
+  const r = Math.round(255 - t * (255 - targetR));
+  const g = Math.round(255 - t * (255 - targetG));
+  const b = Math.round(255 - t * (255 - targetB));
+  return `rgb(${r},${g},${b})`;
+}
+
+function buildHeatmap() {
+  const m = allMarkets;
+  // Pre-compute min/max across all markets (fixed scale, independent of filters)
+  const cols = {
+    gdp_growth:        { invert: false, tR: 5, tG: 150, tB: 105 },
+    inflation:         { invert: true,  tR: 220, tG: 38, tB: 38 },
+    gdp_pc_ppp:        { invert: false, tR: 5, tG: 150, tB: 105 },
+    ecommerce_pct:     { invert: false, tR: 5, tG: 150, tB: 105 },
+    urbanization_pct:  { invert: false, tR: 5, tG: 150, tB: 105 },
+    gini:              { invert: true,  tR: 5, tG: 150, tB: 105 },
+    internet_pct:      { invert: false, tR: 5, tG: 150, tB: 105 },
+    govt_debt_pct:     { invert: true,  tR: 5, tG: 150, tB: 105 },
+  };
+
+  const ranges = {};
+  Object.keys(cols).forEach(col => {
+    const vals = m.map(x => x[col]).filter(v => v != null);
+    ranges[col] = { min: Math.min(...vals), max: Math.max(...vals) };
+  });
+
+  // median_age: neutral scale (age 20=blue tint, 35=white, 50=red tint)
+  const ageMin = Math.min(...m.map(x => x.median_age).filter(v => v != null));
+  const ageMax = Math.max(...m.map(x => x.median_age).filter(v => v != null));
+
+  function ageBg(age) {
+    if (age == null) return '#F1F5F9';
+    const mid = 35;
+    if (age <= mid) {
+      // age 20→blue, age 35→white
+      const t = Math.max(0, Math.min(1, (mid - age) / (mid - ageMin)));
+      return `rgb(${Math.round(255 - t*60)},${Math.round(255 - t*80)},255)`;
+    } else {
+      // age 35→white, age 50→red
+      const t = Math.max(0, Math.min(1, (age - mid) / (ageMax - mid)));
+      return `rgb(255,${Math.round(255 - t*150)},${Math.round(255 - t*150)})`;
+    }
+  }
+
+  // Text color based on background luminance
+  function textColor(bgRgb) {
+    // Simple: dark text for light bg, light text for dark bg
+    const match = bgRgb.match(/rgb\((\d+),(\d+),(\d+)\)/);
+    if (!match) return '#0F172A';
+    const lum = 0.299*parseInt(match[1]) + 0.587*parseInt(match[2]) + 0.114*parseInt(match[3]);
+    return lum > 160 ? '#0F172A' : '#fff';
+  }
+
+  const regionOrder = ['Americas', 'LATAM', 'WE', 'EEMEA', 'APAC'];
+  const tbody = document.getElementById('heatmapBody');
+  tbody.innerHTML = '';
+
+  regionOrder.forEach(region => {
+    const regionMarkets = m.filter(x => x.region === region)
+      .sort((a, b) => (b.gdp_growth || 0) - (a.gdp_growth || 0));
+
+    // Region separator
+    const sepTr = document.createElement('tr');
+    sepTr.className = 'region-sep';
+    sepTr.innerHTML = `<td colspan="11">${region}</td>`;
+    tbody.appendChild(sepTr);
+
+    regionMarkets.forEach(mkt => {
+      const tr = document.createElement('tr');
+      tr.dataset.marketId = mkt.id;
+
+      function cell(val, col) {
+        const bg = heatColor(val, ranges[col].min, ranges[col].max,
+          cols[col].invert, cols[col].tR, cols[col].tG, cols[col].tB);
+        const tc = textColor(bg);
+        const display = val != null ? (Number.isInteger(val) ? val.toLocaleString() : val.toFixed(1)) : 'N/A';
+        return `<td style="background:${bg};color:${tc}">${display}</td>`;
+      }
+
+      const ageBg_ = ageBg(mkt.median_age);
+      const ageTc = textColor(ageBg_);
+      const ageDisplay = mkt.median_age != null ? mkt.median_age.toFixed(1) : 'N/A';
+
+      const gdpPcDisplay = mkt.gdp_pc_ppp != null ? '$' + (mkt.gdp_pc_ppp/1000).toFixed(0) + 'K' : 'N/A';
+      const gdpPcBg = heatColor(mkt.gdp_pc_ppp, ranges.gdp_pc_ppp.min, ranges.gdp_pc_ppp.max, false, 5, 150, 105);
+
+      tr.innerHTML = `
+        <td class="mkt-name">${mkt.name}</td>
+        ${cell(mkt.gdp_growth, 'gdp_growth')}
+        ${cell(mkt.inflation, 'inflation')}
+        <td style="background:${gdpPcBg};color:${textColor(gdpPcBg)};text-align:center;font-family:'Fira Code',monospace;font-size:11px;">${gdpPcDisplay}</td>
+        ${cell(mkt.ecommerce_pct, 'ecommerce_pct')}
+        ${cell(mkt.urbanization_pct, 'urbanization_pct')}
+        <td style="background:${ageBg_};color:${ageTc};text-align:center;font-family:'Fira Code',monospace;font-size:11px;">${ageDisplay}</td>
+        ${cell(mkt.gini, 'gini')}
+        ${cell(mkt.internet_pct, 'internet_pct')}
+        ${cell(mkt.govt_debt_pct, 'govt_debt_pct')}
+        <td style="text-align:center;">${buildSignalPill(mkt.fmcg_signal)}</td>
+      `;
+
+      tr.addEventListener('click', () => openMarketModal(mkt));
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// MARKET DETAIL MODAL
+// ═══════════════════════════════════════════════════════════
+function openMarketModal(m) {
+  document.getElementById('modalTitle').textContent = m.name + ' (' + m.id + ')';
+  document.getElementById('modalSubtitle').textContent =
+    m.region + ' · ' + buildSignalPillText(m.fmcg_signal);
+
+  const stats = [
+    ['GDP Growth', m.gdp_growth != null ? m.gdp_growth.toFixed(1) + '%' : 'N/A'],
+    ['Inflation', m.inflation != null ? m.inflation.toFixed(2) + '%' : 'N/A'],
+    ['GDP pc PPP', m.gdp_pc_ppp != null ? '$' + m.gdp_pc_ppp.toLocaleString() : 'N/A'],
+    ['Population', m.population_m != null ? m.population_m.toLocaleString() + 'M' : 'N/A'],
+    ['Urbanization', m.urbanization_pct != null ? m.urbanization_pct.toFixed(1) + '%' : 'N/A'],
+    ['Median Age', m.median_age != null ? m.median_age + ' yrs' : 'N/A'],
+    ['Gini', m.gini != null ? m.gini.toFixed(1) : 'N/A'],
+    ['Internet', m.internet_pct != null ? m.internet_pct + '%' : 'N/A'],
+    ['E-Commerce', m.ecommerce_pct != null ? m.ecommerce_pct.toFixed(1) + '%' : 'N/A'],
+    ['Govt Debt', m.govt_debt_pct != null ? m.govt_debt_pct + '% GDP' : 'N/A'],
+    ['Priv Consump', m.private_consumption_pct != null ? m.private_consumption_pct + '% GDP' : 'N/A'],
+    ['Big Mac USD', m.big_mac_usd != null ? '$' + m.big_mac_usd.toFixed(2) : 'N/A'],
+    ['Coke Price', m.coke_price_usd != null ? '$' + m.coke_price_usd.toFixed(2) : 'N/A'],
+    ['Curr Account', m.current_account_pct != null ? (m.current_account_pct >= 0 ? '+' : '') + m.current_account_pct.toFixed(2) + '%' : 'N/A'],
+    ['Unemployment', m.unemployment_pct != null ? m.unemployment_pct.toFixed(1) + '%' : 'N/A'],
+    ['FDI % GDP', m.fdi_pct != null ? m.fdi_pct.toFixed(1) + '%' : 'N/A'],
+  ];
+
+  const grid = document.getElementById('modalGrid');
+  grid.innerHTML = stats.map(([label, val]) => `
+    <div class="modal-stat">
+      <div class="modal-stat-label">${label}</div>
+      <div class="modal-stat-value">${val}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('modalInsight').textContent =
+    m.retailer_insight || 'No retailer insight available.';
+
+  document.getElementById('marketModal').classList.add('open');
+}
+
+function buildSignalPillText(signal) {
+  return signal;
+}
+
+function closeModal(event) {
+  if (event.target === document.getElementById('marketModal')) {
+    document.getElementById('marketModal').classList.remove('open');
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('marketModal').classList.remove('open');
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') document.getElementById('marketModal').classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════════════════
+// TABLE
+// ═══════════════════════════════════════════════════════════
+function renderTable() {
+  const filtered = getFilteredMarkets();
+
+  const sorted = [...filtered].sort((a, b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (av === null || av === undefined) av = -Infinity;
+    if (bv === null || bv === undefined) bv = -Infinity;
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  if (sorted.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="17"><div class="no-results">No markets match the current filters.</div></td></tr>';
+    document.getElementById('tableCount').textContent = '0';
+    return;
+  }
+
+  sorted.forEach((m, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'fade-in';
+    tr.style.animationDelay = Math.min(i * 15, 500) + 'ms';
+
+    const bigMac = m.big_mac_usd != null ? '$' + m.big_mac_usd.toFixed(2) : null;
+    const gdpPc = m.gdp_pc_ppp ? '$' + m.gdp_pc_ppp.toLocaleString() : 'N/A';
+    const caClass = (m.current_account_pct || 0) >= 0 ? 'pos' : 'neg';
+    const caVal = m.current_account_pct != null ? (m.current_account_pct >= 0 ? '+' : '') + m.current_account_pct.toFixed(2) + '%' : 'N/A';
+
+    const signalPill = buildSignalPill(m.fmcg_signal);
+    const regionPill = `<span class="region-pill ${m.region}">${m.region}</span>`;
+
+    const retailerInsight = m.retailer_insight || '';
+    const truncated = retailerInsight.length > 60 ? retailerInsight.substring(0, 60) + '…' : retailerInsight;
+
+    tr.innerHTML = `
+      <td>
+        <div class="market-name">${m.name}</div>
+        <div class="market-id">${m.id}</div>
+      </td>
+      <td>${regionPill}</td>
+      <td class="num">${m.gdp_growth != null ? m.gdp_growth.toFixed(1) + '%' : 'N/A'}</td>
+      <td class="num">${m.inflation != null ? m.inflation.toFixed(2) + '%' : 'N/A'}</td>
+      <td class="num">${m.population_m != null ? m.population_m.toLocaleString() : 'N/A'}</td>
+      <td class="num">${gdpPc}</td>
+      <td class="num">${m.unemployment_pct != null ? m.unemployment_pct.toFixed(1) + '%' : 'N/A'}</td>
+      <td class="num">${m.urbanization_pct != null ? m.urbanization_pct.toFixed(1) + '%' : 'N/A'}</td>
+      <td class="num">${m.median_age != null ? m.median_age.toFixed(1) : 'N/A'}</td>
+      <td class="num">${m.ecommerce_pct != null ? m.ecommerce_pct.toFixed(1) + '%' : 'N/A'}</td>
+      <td class="num">${m.internet_pct != null ? m.internet_pct + '%' : 'N/A'}</td>
+      <td class="num">${m.gini != null ? m.gini.toFixed(1) : 'N/A'}</td>
+      <td class="${bigMac ? 'num' : 'na'}">${bigMac || 'N/A'}</td>
+      <td class="num">${m.private_consumption_pct != null ? m.private_consumption_pct + '%' : 'N/A'}</td>
+      <td>${signalPill}</td>
+      <td class="${caClass}">${caVal}</td>
+      <td class="retailer-insight-cell" title="${retailerInsight}">${truncated}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('tableCount').textContent = sorted.length;
+  updateTableHeaders();
+  updateSortChip();
+}
+
+function buildSignalPill(signal) {
+  const hasPulse = signal === 'Growing' || signal === 'Volatile';
+  const dot = hasPulse ? `<span class="pulse-dot"></span>` : '';
+  return `<span class="signal-pill ${signal}">${dot}${signal}</span>`;
+}
+
+function updateTableHeaders() {
+  document.querySelectorAll('thead th').forEach(th => {
+    const col = th.dataset.col;
+    th.classList.remove('sorted');
+    const arr = th.querySelector('.sort-arr');
+    if (arr) arr.textContent = '↕';
+    if (col === sortCol) {
+      th.classList.add('sorted');
+      if (arr) arr.textContent = sortDir === 'asc' ? '↑' : '↓';
+    }
+  });
+}
+
+function updateSortChip() {
+  const labels = {
+    name: 'Market Name', region: 'Region', gdp_growth: 'GDP Growth',
+    inflation: 'Inflation', population_m: 'Population', gdp_pc_ppp: 'GDP pc PPP',
+    unemployment_pct: 'Unemployment', urbanization_pct: 'Urbanization',
+    median_age: 'Median Age', ecommerce_pct: 'E-commerce',
+    internet_pct: 'Internet', gini: 'Gini',
+    big_mac_usd: 'Big Mac', private_consumption_pct: 'Priv Consump',
+    fmcg_signal: 'Signal', current_account_pct: 'Curr Acct',
+    retailer_insight: 'Retailer Insight'
+  };
+  document.getElementById('sortChip').textContent = `Sorted: ${labels[sortCol] || sortCol} ${sortDir === 'asc' ? '↑' : '↓'}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SORT
+// ═══════════════════════════════════════════════════════════
+function sortTable(col) {
+  if (sortCol === col) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortCol = col;
+    sortDir = ['name', 'region', 'fmcg_signal', 'retailer_insight'].includes(col) ? 'asc' : 'desc';
+  }
+  renderTable();
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════════════════════
+function setRegion(region, btn) {
+  currentRegion = region;
+  document.querySelectorAll('[data-region]').forEach(b => {
+    b.className = 'pill-btn';
+  });
+  const activeClass = region === 'All' ? 'active' :
+    region === 'APAC' ? 'active-apac' :
+    region === 'Americas' ? 'active-americas' :
+    region === 'LATAM' ? 'active-latam' :
+    region === 'WE' ? 'active-we' :
+    region === 'EEMEA' ? 'active-eemea' : 'active';
+  btn.className = 'pill-btn ' + activeClass;
+
+  applyFilters();
+}
+
+function applyFilters() {
+  currentSignal = document.getElementById('signalFilter').value;
+  currentSearch = document.getElementById('searchInput').value.trim();
+  renderTable();
+  buildBarChart();
+  buildScatterChart();
+}
+
+// ═══════════════════════════════════════════════════════════
+// ACCORDION
+// ═══════════════════════════════════════════════════════════
+function toggleAccordion(trigger) {
+  const body = trigger.nextElementSibling;
+  const isOpen = trigger.classList.contains('open');
+
+  document.querySelectorAll('.accordion-trigger.open').forEach(t => {
+    t.classList.remove('open');
+    t.nextElementSibling.classList.remove('open');
+  });
+
+  if (!isOpen) {
+    trigger.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// GUIDE TOGGLE
+// ═══════════════════════════════════════════════════════════
+let guideOpen = false;
+function toggleGuide() {
+  guideOpen = !guideOpen;
+  document.getElementById('main-dashboard').style.display = guideOpen ? 'none' : '';
+  document.getElementById('guide-section').style.display = guideOpen ? 'block' : 'none';
+  document.getElementById('guideTab').classList.toggle('active', guideOpen);
+  // Scroll to top when toggling
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
